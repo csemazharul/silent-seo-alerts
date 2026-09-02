@@ -144,6 +144,6 @@ class ChangeTypes
 
     public static function baseSeverity($type)
     {
-        return isset(self::SEVERITY[$type]) ? self::SEVERITY[$type] : Finding::SEVERITY_INFO;
+        return self::SEVERITY[$type] ?? Finding::SEVERITY_INFO;
     }
 }

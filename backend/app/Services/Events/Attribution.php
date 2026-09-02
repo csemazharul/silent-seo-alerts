@@ -81,7 +81,7 @@ class Attribution
             $attached[] = [
                 'event_id' => (int) $event->id,
                 'type'     => $event->event_type,
-                'subject'  => isset($details['name']) ? $details['name'] : $event->subject,
+                'subject'  => $details['name'] ?? $event->subject,
                 'at'       => $event->created_at,
             ];
         }

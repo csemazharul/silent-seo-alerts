@@ -55,7 +55,7 @@ final class Plugin
 
         Hooks::addFilter('plugin_action_links_' . Config::get('BASENAME'), [new PluginPageActions(), 'renderActionLinks']);
 
-        $this->maybeMigrateDB();
+        self::maybeMigrateDB();
     }
 
     public function middlewares()

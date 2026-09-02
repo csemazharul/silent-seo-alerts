@@ -113,7 +113,7 @@ class SlackNotifier
             $context = isset($after['context']) && \is_array($after['context']) ? $after['context'] : [];
             $why     = ExplanationRegistry::get($finding->change_type, $context);
             $target  = $finding->target_id ? Target::findOne(['id' => $finding->target_id]) : null;
-            $emoji   = isset(self::EMOJI[$finding->severity]) ? self::EMOJI[$finding->severity] : '';
+            $emoji   = self::EMOJI[$finding->severity] ?? '';
 
             $blocks[] = [
                 'type' => 'section',

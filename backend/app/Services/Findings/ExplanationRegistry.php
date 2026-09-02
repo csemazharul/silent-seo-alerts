@@ -25,11 +25,7 @@ class ExplanationRegistry
     {
         $all = self::templates($context);
 
-        if (isset($all[$type])) {
-            return $all[$type];
-        }
-
-        return [
+        return $all[$type] ?? [
             'what'  => __('Something monitored on this page changed.', 'seo-change-monitor'),
             'why'   => __('Any unplanned change to SEO output is worth a look.', 'seo-change-monitor'),
             'check' => __('Compare the before and after values above.', 'seo-change-monitor'),

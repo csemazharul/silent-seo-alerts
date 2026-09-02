@@ -65,7 +65,7 @@ class Settings
 
         return array_values(
             array_filter(
-                array_map('trim', $urls),
+                array_map(trim(...), $urls),
                 static fn ($url) => $url !== '' && filter_var($url, FILTER_VALIDATE_URL) !== false
             )
         );
@@ -82,7 +82,7 @@ class Settings
     {
         $all = self::all();
 
-        return isset($all[$key]) ? $all[$key] : null;
+        return $all[$key] ?? null;
     }
 
     public static function update(array $partial)

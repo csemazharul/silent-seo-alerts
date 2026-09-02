@@ -27,13 +27,13 @@ final class HtmlTagModifier
         if (Config::getEnv('DEV')) {
             foreach ($keys as $key) {
                 $handle = 'id="' . $slug . $key . '"';
-                if (strpos($html, $handle) !== false) {
+                if (str_contains($html, $handle)) {
                     $html = str_replace($handle, $handle . ' ' . $typeAttribute, $html);
                 }
             }
         } else {
             $handle = 'id="' . $slug . '-index-MODULE-js"';
-            if (strpos($html, $handle) !== false) {
+            if (str_contains($html, $handle)) {
                 $html = str_replace($handle, $handle . ' ' . $typeAttribute, $html);
             }
         }
@@ -45,19 +45,19 @@ final class HtmlTagModifier
     {
         $slug = Config::SLUG;
 
-        if (strpos($handle, $slug) === false) {
+        if (!str_contains($handle, $slug)) {
             return $html;
         }
 
-        if (strpos($handle, 'PRECONNECT') !== false) {
+        if (str_contains($handle, 'PRECONNECT')) {
             $html = str_replace("rel='stylesheet'", 'rel="preconnect"', $html);
         }
 
-        if (strpos($handle, 'PRELOAD') !== false) {
+        if (str_contains($handle, 'PRELOAD')) {
             $html = str_replace("rel='stylesheet'", 'rel="preload"', $html);
         }
 
-        if (strpos($handle, 'CROSSORIGIN') !== false) {
+        if (str_contains($handle, 'CROSSORIGIN')) {
             $id   = "id='{$handle}-css'";
             $html = str_replace($id, $id . ' crossorigin', $html);
         }
@@ -68,7 +68,7 @@ final class HtmlTagModifier
     public function removeQueryParam($src, $handle)
     {
         if (Config::SLUG . '-index-MODULE' === $handle) {
-            $src = strtok($src, '?');
+            return strtok($src, '?');
         }
 
         return $src;

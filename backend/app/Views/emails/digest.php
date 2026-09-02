@@ -43,9 +43,9 @@ $severityColours = [
 
         <?php foreach ($findings as $finding) : ?>
             <?php
-            $colour      = isset($severityColours[$finding->severity]) ? $severityColours[$finding->severity] : '#2271b1';
-            $explanation = isset($explanations[$finding->id]) ? $explanations[$finding->id] : null;
-            $label       = isset($pageLabels[$finding->target_id]) ? $pageLabels[$finding->target_id] : null;
+            $colour      = $severityColours[$finding->severity] ?? '#2271b1';
+            $explanation = $explanations[$finding->id] ?? null;
+            $label       = $pageLabels[$finding->target_id] ?? null;
             $before      = json_decode((string) $finding->before_value, true);
             $after       = json_decode((string) $finding->after_value, true);
             $events      = json_decode((string) $finding->attributed_events, true) ?: [];
@@ -97,8 +97,8 @@ $severityColours = [
                 <?php foreach ($resolved as $finding) : ?>
                     <li>
                         <?php
-                        $label       = isset($pageLabels[$finding->target_id]) ? $pageLabels[$finding->target_id] : __('Site-wide', 'seo-change-monitor');
-                        $explanation = isset($explanations[$finding->id]) ? $explanations[$finding->id] : null;
+                        $label       = $pageLabels[$finding->target_id] ?? __('Site-wide', 'seo-change-monitor');
+                        $explanation = $explanations[$finding->id] ?? null;
                         echo esc_html($label);
                         if ($explanation) {
                             echo ': ' . esc_html($explanation['what']);

@@ -31,9 +31,7 @@ final class PluginOptions extends Migration
                 . implode(
                     ',',
                     array_map(
-                        function () {
-                            return '%s';
-                        },
+                        fn() => '%s',
                         $pluginOptions
                     )
                 ) . ')',

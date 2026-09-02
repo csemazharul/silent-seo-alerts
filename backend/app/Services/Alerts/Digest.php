@@ -28,7 +28,7 @@ class Digest
      */
     public static function rank($severity, $fallback = 0)
     {
-        return isset(self::RANK[$severity]) ? self::RANK[$severity] : $fallback;
+        return self::RANK[$severity] ?? $fallback;
     }
 
     /**

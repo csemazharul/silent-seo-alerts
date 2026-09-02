@@ -103,8 +103,8 @@ class FindingRecorder
      */
     private function stillActive($finding, array $fields)
     {
-        $robots    = isset($fields['meta_robots']) ? (string) $fields['meta_robots'] : '';
-        $canonical = isset($fields['canonical']) ? (string) $fields['canonical'] : '';
+        $robots    = (string) ($fields['meta_robots'] ?? '');
+        $canonical = (string) ($fields['canonical'] ?? '');
 
         switch ($finding->change_type) {
             case ChangeTypes::TITLE_REMOVED:
@@ -114,7 +114,7 @@ class FindingRecorder
                 return empty($fields['meta_description']);
 
             case ChangeTypes::NOINDEX_ADDED:
-                return strpos($robots, 'noindex') !== false;
+                return str_contains($robots, 'noindex');
 
             case ChangeTypes::CANONICAL_REMOVED:
                 return $canonical === '';
@@ -124,8 +124,8 @@ class FindingRecorder
 
             case ChangeTypes::SCHEMA_TYPE_REMOVED:
                 $after   = json_decode((string) $finding->after_value, true);
-                $removed = isset($after['context']['removed']) ? (array) $after['context']['removed'] : [];
-                $current = isset($fields['schema_types']) ? (array) $fields['schema_types'] : [];
+                $removed = (array) ($after['context']['removed'] ?? []);
+                $current = (array) ($fields['schema_types'] ?? []);
 
                 return array_diff($removed, $current) !== [];
 
@@ -137,8 +137,8 @@ class FindingRecorder
 
             case ChangeTypes::WORD_COUNT_DROP_MAJOR:
                 $before = json_decode((string) $finding->before_value, true);
-                $old    = isset($before['value']) ? (int) $before['value'] : 0;
-                $now    = isset($fields['word_count']) ? (int) $fields['word_count'] : 0;
+                $old    = (int) ($before['value'] ?? 0);
+                $now    = (int) ($fields['word_count'] ?? 0);
 
                 // Cleared once the page recovers to within 20% of its old length.
                 return $old > 0 && $now < $old * 0.8;

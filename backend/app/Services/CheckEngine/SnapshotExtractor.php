@@ -64,9 +64,9 @@ class SnapshotExtractor
                 $fields['meta_description'] = $content;
             } elseif ($name === 'robots') {
                 $fields['meta_robots'] = strtolower($content);
-            } elseif (strpos($name, 'og:') === 0) {
+            } elseif (str_starts_with($name, 'og:')) {
                 $fields['og'][$name] = $content;
-            } elseif (strpos($name, 'twitter:') === 0) {
+            } elseif (str_starts_with($name, 'twitter:')) {
                 $fields['twitter'][$name] = $content;
             }
         }

@@ -73,7 +73,7 @@ $tone   = ['critical' => '#b32d2e', 'warning' => '#bd8600', 'info' => '#2271b1']
     <?php if (!empty($data['findings'])) : ?>
         <h3 style="font-size:15px;margin:0 0 10px;"><?php esc_html_e('What changed', 'seo-change-monitor'); ?></h3>
         <?php foreach ($data['findings'] as $finding) : ?>
-            <?php $colour = isset($tone[$finding['severity']]) ? $tone[$finding['severity']] : '#2271b1'; ?>
+            <?php $colour = $tone[$finding['severity']] ?? '#2271b1'; ?>
             <div style="border:1px solid #dcdcde;border-left:4px solid <?php echo esc_attr($colour); ?>;padding:12px 14px;margin-bottom:12px;">
                 <div style="font-size:11px;text-transform:uppercase;letter-spacing:.05em;font-weight:700;color:<?php echo esc_attr($colour); ?>;">
                     <?php echo esc_html($finding['severity']); ?>

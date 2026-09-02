@@ -99,7 +99,7 @@ class WeeklyReport
         $raw = Settings::get('report_recipients');
         $raw = \is_array($raw) ? $raw : preg_split('/[\s,]+/', (string) $raw);
 
-        return array_values(array_filter(array_map('trim', (array) $raw), 'is_email'));
+        return array_values(array_filter(array_map(trim(...), (array) $raw), is_email(...)));
     }
 
     private function subject(array $data)

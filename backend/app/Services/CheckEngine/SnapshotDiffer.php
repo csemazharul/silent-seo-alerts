@@ -39,8 +39,8 @@ class SnapshotDiffer
 
     private function diffText(array &$changes, $before, $after, $key, $changedType, $removedType)
     {
-        $old = isset($before[$key]) ? $before[$key] : null;
-        $new = isset($after[$key]) ? $after[$key] : null;
+        $old = $before[$key] ?? null;
+        $new = $after[$key] ?? null;
 
         if ($old === $new) {
             return;
@@ -55,8 +55,8 @@ class SnapshotDiffer
 
     private function diffRobots(array &$changes, $before, $after)
     {
-        $old = isset($before['meta_robots']) ? (string) $before['meta_robots'] : '';
-        $new = isset($after['meta_robots']) ? (string) $after['meta_robots'] : '';
+        $old = (string) ($before['meta_robots'] ?? '');
+        $new = (string) ($after['meta_robots'] ?? '');
 
         if ($old === $new) {
             return;
@@ -89,13 +89,13 @@ class SnapshotDiffer
 
     private function robotsTokens($value)
     {
-        return array_filter(array_map('trim', explode(',', strtolower($value))));
+        return array_filter(array_map(trim(...), explode(',', strtolower($value))));
     }
 
     private function diffCanonical(array &$changes, $before, $after)
     {
-        $old = isset($before['canonical']) ? $before['canonical'] : null;
-        $new = isset($after['canonical']) ? $after['canonical'] : null;
+        $old = $before['canonical'] ?? null;
+        $new = $after['canonical'] ?? null;
 
         if ($old === $new) {
             return;
@@ -118,8 +118,8 @@ class SnapshotDiffer
 
     private function diffSchema(array &$changes, $before, $after)
     {
-        $old = isset($before['schema_types']) ? (array) $before['schema_types'] : [];
-        $new = isset($after['schema_types']) ? (array) $after['schema_types'] : [];
+        $old = (array) ($before['schema_types'] ?? []);
+        $new = (array) ($after['schema_types'] ?? []);
 
         $invalid = '(invalid JSON-LD)';
         if (\in_array($invalid, $new, true) && !\in_array($invalid, $old, true)) {
@@ -140,8 +140,8 @@ class SnapshotDiffer
 
     private function diffMap(array &$changes, $before, $after, $key, $type)
     {
-        $old = isset($before[$key]) ? (array) $before[$key] : [];
-        $new = isset($after[$key]) ? (array) $after[$key] : [];
+        $old = (array) ($before[$key] ?? []);
+        $new = (array) ($after[$key] ?? []);
 
         if ($old == $new) {
             return;
@@ -149,8 +149,8 @@ class SnapshotDiffer
 
         $changed = [];
         foreach (array_unique(array_merge(array_keys($old), array_keys($new))) as $tag) {
-            $ov = isset($old[$tag]) ? $old[$tag] : null;
-            $nv = isset($new[$tag]) ? $new[$tag] : null;
+            $ov = $old[$tag] ?? null;
+            $nv = $new[$tag] ?? null;
             if ($ov !== $nv) {
                 $changed[] = $tag;
             }
@@ -161,10 +161,10 @@ class SnapshotDiffer
 
     private function diffH1(array &$changes, $before, $after)
     {
-        $oldCount = isset($before['h1_count']) ? (int) $before['h1_count'] : 0;
-        $newCount = isset($after['h1_count']) ? (int) $after['h1_count'] : 0;
-        $oldFirst = isset($before['h1_first']) ? $before['h1_first'] : null;
-        $newFirst = isset($after['h1_first']) ? $after['h1_first'] : null;
+        $oldCount = (int) ($before['h1_count'] ?? 0);
+        $newCount = (int) ($after['h1_count'] ?? 0);
+        $oldFirst = $before['h1_first'] ?? null;
+        $newFirst = $after['h1_first'] ?? null;
 
         if ($oldCount > 0 && $newCount === 0) {
             $changes[] = new Change(ChangeTypes::H1_REMOVED, $oldFirst, null, ['before_count' => $oldCount]);
@@ -183,15 +183,15 @@ class SnapshotDiffer
 
     private function diffHttp(array &$changes, $before, $after)
     {
-        $oldStatus = isset($before['http_status']) ? (int) $before['http_status'] : 0;
-        $newStatus = isset($after['http_status']) ? (int) $after['http_status'] : 0;
+        $oldStatus = (int) ($before['http_status'] ?? 0);
+        $newStatus = (int) ($after['http_status'] ?? 0);
 
         if ($newStatus >= 400 && $oldStatus < 400) {
             $changes[] = new Change(ChangeTypes::HTTP_STATUS_ERROR, $oldStatus, $newStatus);
         }
 
-        $oldRedirect = isset($before['redirect_target']) ? $before['redirect_target'] : null;
-        $newRedirect = isset($after['redirect_target']) ? $after['redirect_target'] : null;
+        $oldRedirect = $before['redirect_target'] ?? null;
+        $newRedirect = $after['redirect_target'] ?? null;
 
         if ($newRedirect && $newRedirect !== $oldRedirect) {
             $type      = $this->isOffDomain($newRedirect) ? ChangeTypes::REDIRECT_OFFSITE : ChangeTypes::REDIRECT_ADDED;
@@ -201,8 +201,8 @@ class SnapshotDiffer
 
     private function diffWordCount(array &$changes, $before, $after)
     {
-        $old = isset($before['word_count']) ? (int) $before['word_count'] : 0;
-        $new = isset($after['word_count']) ? (int) $after['word_count'] : 0;
+        $old = (int) ($before['word_count'] ?? 0);
+        $new = (int) ($after['word_count'] ?? 0);
 
         if ($old < 50 || $new >= $old) {
             return; // tiny pages and growth are not alertable

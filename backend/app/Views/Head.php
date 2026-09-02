@@ -15,7 +15,7 @@ class Head
 
     public function addHeadScripts($currentScreen)
     {
-        if (strpos($currentScreen, Config::SLUG) === false) {
+        if (!str_contains($currentScreen, Config::SLUG)) {
             return;
         }
 

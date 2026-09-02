@@ -133,8 +133,8 @@ TXT;
             'Change type: ' . $finding->change_type,
             'Severity: ' . $finding->severity,
             'Applies to: ' . ($target ? $target->label : 'the whole site'),
-            'Value before: ' . $scalar(isset($before['value']) ? $before['value'] : null),
-            'Value after: ' . $scalar(isset($after['value']) ? $after['value'] : null),
+            'Value before: ' . $scalar($before['value'] ?? null),
+            'Value after: ' . $scalar($after['value'] ?? null),
             'Changed by a site edit the owner made: ' . ($finding->is_expected ? 'yes' : 'not that we can tell'),
         ];
 

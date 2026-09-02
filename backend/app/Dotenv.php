@@ -19,7 +19,7 @@ final class Dotenv
         $lines = file($path, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
 
         foreach ($lines as $line) {
-            if (strpos($line, '=') === false) {
+            if (!str_contains($line, '=')) {
                 continue;
             }
 
@@ -33,16 +33,16 @@ final class Dotenv
                 continue;
             }
 
-            list($name, $value) = explode('=', trim($line), 2);
+            [$name, $value] = explode('=', trim($line), 2);
 
             $name = Config::VAR_PREFIX . trim($name);
 
             $value = trim($value);
 
             if (is_numeric($value)) {
-                $value = $value + 0; // Converts to int or float
-            } elseif (strtolower($value) == 'true' || strtolower($value) == 'false') {
-                $value = strtolower($value) == 'true'; // Converts to boolean
+                $value += 0; // Converts to int or float
+            } elseif (strtolower($value) === 'true' || strtolower($value) === 'false') {
+                $value = strtolower($value) === 'true'; // Converts to boolean
             }
 
             if (! \array_key_exists($name, $_ENV)) {

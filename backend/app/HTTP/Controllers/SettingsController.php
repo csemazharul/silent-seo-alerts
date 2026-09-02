@@ -154,7 +154,7 @@ class SettingsController
 
         if ($request->has('slack_webhook_url')) {
             $url = esc_url_raw(trim((string) $request->get('slack_webhook_url')));
-            if ($url !== '' && strpos($url, 'https://hooks.slack.com/') !== 0) {
+            if ($url !== '' && !str_starts_with($url, 'https://hooks.slack.com/')) {
                 return Response::error(__('That does not look like a Slack incoming webhook URL.', 'seo-change-monitor'));
             }
 
@@ -215,7 +215,7 @@ class SettingsController
     {
         $url = esc_url_raw(trim((string) $request->get('url')));
 
-        if ($url === '' || strpos($url, 'https://hooks.slack.com/') !== 0) {
+        if ($url === '' || !str_starts_with($url, 'https://hooks.slack.com/')) {
             return Response::error(__('Enter a Slack incoming webhook URL (it starts with https://hooks.slack.com/).', 'seo-change-monitor'));
         }
 

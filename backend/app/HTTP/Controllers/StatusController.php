@@ -120,7 +120,7 @@ class StatusController
 
         $rows = [];
         foreach (AiBots::KNOWN as $slug => [$label, $userAgent]) {
-            $visit  = isset($seen[$slug]) ? $seen[$slug] : null;
+            $visit  = $seen[$slug] ?? null;
             $rows[] = [
                 'slug'       => $slug,
                 'label'      => $label,
@@ -144,7 +144,7 @@ class StatusController
                 return [
                     'id'      => (int) $event->id,
                     'type'    => $event->event_type,
-                    'subject' => isset($details['name']) ? $details['name'] : $event->subject,
+                    'subject' => $details['name'] ?? $event->subject,
                     'at'      => $event->created_at,
                 ];
             },

@@ -118,8 +118,8 @@ class CheckRunner
         }
 
         $runId   = (int) $queue['run_id'];
-        $pending = isset($queue['pending_ids']) ? (array) $queue['pending_ids'] : [];
-        $errors  = isset($queue['errors']) ? (int) $queue['errors'] : 0;
+        $pending = (array) ($queue['pending_ids'] ?? []);
+        $errors  = (int) ($queue['errors'] ?? 0);
 
         $run = CheckRun::findOne(['id' => $runId]);
         if (!$run) {

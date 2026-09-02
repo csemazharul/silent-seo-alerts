@@ -48,7 +48,7 @@ class AnthropicProvider implements AiProvider
             'claude-sonnet-5'  => ['input' => 2.00, 'output' => 10.00],
         ];
 
-        return isset($rates[$model]) ? $rates[$model] : $rates['claude-haiku-4-5'];
+        return $rates[$model] ?? $rates['claude-haiku-4-5'];
     }
 
     public function complete($system, $user, $model)
@@ -89,15 +89,13 @@ class AnthropicProvider implements AiProvider
         }
 
         if ($status < 200 || $status >= 300) {
-            $message = isset($body['error']['message'])
-                ? $body['error']['message']
-                : sprintf(__('Anthropic returned HTTP %d.', 'seo-change-monitor'), $status);
+            $message = $body['error']['message'] ?? sprintf(__('Anthropic returned HTTP %d.', 'seo-change-monitor'), $status);
 
             throw new AiException($message);
         }
 
         $text = '';
-        foreach (isset($body['content']) ? (array) $body['content'] : [] as $block) {
+        foreach ((array) ($body['content'] ?? []) as $block) {
             if (isset($block['type'], $block['text']) && $block['type'] === 'text') {
                 $text .= $block['text'];
             }
@@ -109,8 +107,8 @@ class AnthropicProvider implements AiProvider
 
         return [
             'text'          => trim($text),
-            'input_tokens'  => isset($body['usage']['input_tokens']) ? (int) $body['usage']['input_tokens'] : 0,
-            'output_tokens' => isset($body['usage']['output_tokens']) ? (int) $body['usage']['output_tokens'] : 0,
+            'input_tokens'  => (int) ($body['usage']['input_tokens'] ?? 0),
+            'output_tokens' => (int) ($body['usage']['output_tokens'] ?? 0),
         ];
     }
 }

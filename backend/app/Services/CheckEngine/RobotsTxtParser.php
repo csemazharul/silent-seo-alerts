@@ -25,11 +25,11 @@ class RobotsTxtParser
 
         foreach (preg_split('/\R/', (string) $raw) as $line) {
             $line = trim(preg_replace('/#.*$/', '', $line));
-            if ($line === '' || strpos($line, ':') === false) {
+            if ($line === '' || !str_contains($line, ':')) {
                 continue;
             }
 
-            [$field, $value] = array_map('trim', explode(':', $line, 2));
+            [$field, $value] = array_map(trim(...), explode(':', $line, 2));
             $field           = strtolower($field);
 
             if ($field === 'user-agent') {
@@ -39,9 +39,7 @@ class RobotsTxtParser
                 }
 
                 $agent = strtolower($value);
-                if (!isset($groups[$agent])) {
-                    $groups[$agent] = ['allow' => [], 'disallow' => []];
-                }
+                $groups[$agent] ??= ['allow' => [], 'disallow' => []];
 
                 $current[] = $agent;
 

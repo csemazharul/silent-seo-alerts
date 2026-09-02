@@ -47,7 +47,7 @@ class AlertMailer
         $sent = wp_mail(
             Settings::emailRecipient(),
             $this->subject($findings, $resolved, $impaired),
-            $this->body($findings, $resolved, $impaired),
+            $this->body($findings, $resolved),
             ['Content-Type: text/html; charset=UTF-8']
         );
 
@@ -105,7 +105,7 @@ class AlertMailer
      * Renders the digest view. $findings, $resolved and $impaired are in scope
      * for the template, along with $explanations keyed by finding id.
      */
-    private function body($findings, $resolved, $impaired)
+    private function body($findings, $resolved)
     {
         $explanations = [];
         foreach (array_merge($findings, $resolved) as $finding) {

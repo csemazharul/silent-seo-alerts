@@ -142,9 +142,9 @@ class FindingController
             'change_type'       => $finding->change_type,
             'severity'          => $finding->severity,
             'status'            => $finding->status,
-            'before'            => isset($before['value']) ? $before['value'] : null,
-            'after'             => isset($after['value']) ? $after['value'] : null,
-            'context'           => isset($after['context']) ? $after['context'] : [],
+            'before'            => $before['value'] ?? null,
+            'after'             => $after['value'] ?? null,
+            'context'           => $after['context'] ?? [],
             'attributed_events' => json_decode((string) $finding->attributed_events, true) ?: [],
             'is_expected'       => (bool) $finding->is_expected,
             'note'              => $finding->note,
@@ -195,11 +195,11 @@ class FindingController
         $value = $request->get($key);
 
         if (\is_array($value)) {
-            return array_filter(array_map('sanitize_text_field', $value));
+            return array_filter(array_map(sanitize_text_field(...), $value));
         }
 
         if (\is_string($value) && $value !== '') {
-            return array_filter(array_map('trim', explode(',', sanitize_text_field($value))));
+            return array_filter(array_map(trim(...), explode(',', sanitize_text_field($value))));
         }
 
         return [];

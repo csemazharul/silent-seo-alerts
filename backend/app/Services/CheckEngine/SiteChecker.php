@@ -34,19 +34,12 @@ class SiteChecker
      */
     public function check($type)
     {
-        switch ($type) {
-            case Target::TYPE_ROBOTS:
-                return $this->checkRobots();
-
-            case Target::TYPE_SITEMAP:
-                return $this->checkSitemap();
-
-            case Target::TYPE_SITE_SETTINGS:
-                return $this->checkSiteSettings();
-
-            default:
-                return ['fields' => [], 'error' => 'Unknown site check', 'status' => null];
-        }
+        return match ($type) {
+            Target::TYPE_ROBOTS => $this->checkRobots(),
+            Target::TYPE_SITEMAP => $this->checkSitemap(),
+            Target::TYPE_SITE_SETTINGS => $this->checkSiteSettings(),
+            default => ['fields' => [], 'error' => 'Unknown site check', 'status' => null],
+        };
     }
 
     public function checkRobots()
@@ -125,19 +118,12 @@ class SiteChecker
      */
     public function diff($type, array $before, array $after)
     {
-        switch ($type) {
-            case Target::TYPE_ROBOTS:
-                return $this->diffRobots($before, $after);
-
-            case Target::TYPE_SITEMAP:
-                return $this->diffSitemap($before, $after);
-
-            case Target::TYPE_SITE_SETTINGS:
-                return $this->diffSiteSettings($before, $after);
-
-            default:
-                return [];
-        }
+        return match ($type) {
+            Target::TYPE_ROBOTS => $this->diffRobots($before, $after),
+            Target::TYPE_SITEMAP => $this->diffSitemap($before, $after),
+            Target::TYPE_SITE_SETTINGS => $this->diffSiteSettings($before, $after),
+            default => [],
+        };
     }
 
     private function diffRobots(array $before, array $after)
@@ -151,12 +137,12 @@ class SiteChecker
             $changes[] = new Change(ChangeTypes::ROBOTS_TXT_BLOCKS_ALL, $before['raw'] ?? '', $after['raw'] ?? '');
         }
 
-        $beforeBots = isset($before['ai_bots']) ? (array) $before['ai_bots'] : [];
-        $afterBots  = isset($after['ai_bots']) ? (array) $after['ai_bots'] : [];
+        $beforeBots = (array) ($before['ai_bots'] ?? []);
+        $afterBots  = (array) ($after['ai_bots'] ?? []);
         $flipped    = [];
 
         foreach ($afterBots as $slug => $verdict) {
-            $was = isset($beforeBots[$slug]) ? $beforeBots[$slug] : null;
+            $was = $beforeBots[$slug] ?? null;
             if ($was !== null && $was !== $verdict) {
                 $flipped[] = sprintf('%s (%s → %s)', AiBots::label($slug), $was, $verdict);
             }
@@ -198,8 +184,8 @@ class SiteChecker
             return $changes;
         }
 
-        $oldCount = isset($before['url_count']) ? (int) $before['url_count'] : 0;
-        $newCount = isset($after['url_count']) ? (int) $after['url_count'] : 0;
+        $oldCount = (int) ($before['url_count'] ?? 0);
+        $newCount = (int) ($after['url_count'] ?? 0);
 
         if ($oldCount > 5 && $newCount < $oldCount) {
             $ratio = ($oldCount - $newCount) / $oldCount;

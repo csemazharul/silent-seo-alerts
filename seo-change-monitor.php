@@ -5,7 +5,7 @@
  * Version:           1.0.0
  * Author:            MI
  * Text Domain:       seo-change-monitor
- * Requires PHP:      7.4
+ * Requires PHP:      8.2
  * Requires at least: 5.0
  * Domain Path:       /languages
  * License:           GPL-2.0-or-later

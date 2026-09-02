@@ -44,7 +44,7 @@ class OpenAiProvider implements AiProvider
             'gpt-4o'      => ['input' => 2.50, 'output' => 10.00],
         ];
 
-        return isset($rates[$model]) ? $rates[$model] : $rates['gpt-4o-mini'];
+        return $rates[$model] ?? $rates['gpt-4o-mini'];
     }
 
     public function complete($system, $user, $model)
@@ -86,9 +86,7 @@ class OpenAiProvider implements AiProvider
         }
 
         if ($status < 200 || $status >= 300) {
-            $message = isset($body['error']['message'])
-                ? $body['error']['message']
-                : sprintf(__('OpenAI returned HTTP %d.', 'seo-change-monitor'), $status);
+            $message = $body['error']['message'] ?? sprintf(__('OpenAI returned HTTP %d.', 'seo-change-monitor'), $status);
 
             throw new AiException($message);
         }
@@ -103,8 +101,8 @@ class OpenAiProvider implements AiProvider
 
         return [
             'text'          => trim($text),
-            'input_tokens'  => isset($body['usage']['prompt_tokens']) ? (int) $body['usage']['prompt_tokens'] : 0,
-            'output_tokens' => isset($body['usage']['completion_tokens']) ? (int) $body['usage']['completion_tokens'] : 0,
+            'input_tokens'  => (int) ($body['usage']['prompt_tokens'] ?? 0),
+            'output_tokens' => (int) ($body['usage']['completion_tokens'] ?? 0),
         ];
     }
 }
