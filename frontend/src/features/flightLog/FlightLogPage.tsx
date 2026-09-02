@@ -82,11 +82,9 @@ export default function FlightLogPage() {
             onChange={store.setTargetId}
             options={(targets ?? []).map(target => ({ label: target.label, value: target.id }))}
           />
-          {hasFilters && (
-            <Button size="small" type="link" onClick={store.reset}>
-              {__('Clear filters')}
-            </Button>
-          )}
+          {/* Default size, not small: it sits in a row with the Selects and has
+              to share their control height. */}
+          {hasFilters && <Button onClick={store.reset}>{__('Clear filters')}</Button>}
 
           <span className="ml-auto pr-1 text-xs tabular-nums" style={{ color: palette.inkMuted }}>
             {total === 1 ? __('1 change') : sprintf(__('%d changes'), total)}
