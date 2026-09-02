@@ -20,6 +20,7 @@ export const palette = {
   lineSoft: 'var(--scm-line-soft)',
   primary: 'var(--scm-primary)',
   primarySoft: 'var(--scm-primary-soft)',
+  raised: 'var(--scm-raised)',
   success: 'var(--scm-success)',
   successSoft: 'var(--scm-success-soft)',
   surface: 'var(--scm-surface)',
@@ -28,14 +29,14 @@ export const palette = {
 } as const
 
 const LIGHT = {
-  canvas: '#f4f5f7',
-  critical: '#d92d20',
+  canvas: '#f5f6f8',
+  critical: '#c8372a',
   info: '#175cd3',
   ink: '#111827',
-  inkMuted: '#6b7280',
-  line: '#e6e8eb',
-  lineSoft: '#eff1f3',
-  primary: '#3b5bdb',
+  inkMuted: '#5f6875',
+  line: '#e3e6ea',
+  lineSoft: '#eef0f3',
+  primary: '#1d4ed8',
   primarySoft: '#eef2ff',
   success: '#067647',
   surface: '#ffffff',
@@ -43,29 +44,34 @@ const LIGHT = {
 }
 
 const DARK = {
-  canvas: '#14161b',
-  critical: '#ff7b72',
+  canvas: '#131519',
+  critical: '#f27c72',
   info: '#6cb2ff',
   ink: '#e7eaef',
-  inkMuted: '#9aa2ae',
-  line: '#2b303a',
-  lineSoft: '#232831',
-  primary: '#8098ff',
-  primarySoft: 'rgba(128, 152, 255, 0.16)',
+  inkMuted: '#98a1ad',
+  line: '#2a2f38',
+  lineSoft: '#222630',
+  primary: '#8aa8ff',
+  primarySoft: 'rgba(138, 168, 255, 0.16)',
   success: '#4ec98e',
-  surface: '#1c1f26',
+  surface: '#1a1d23',
   warning: '#e0a458'
 }
 
-export function buildTheme(isDark: boolean): ThemeConfig {
+export function buildTheme(isDark: boolean, isCompact: boolean): ThemeConfig {
   const c = isDark ? DARK : LIGHT
 
+  // antd composes algorithms, so compact stacks on top of light or dark rather
+  // than replacing either.
+  const algorithm = [isDark ? antdTheme.darkAlgorithm : antdTheme.defaultAlgorithm]
+  if (isCompact) algorithm.push(antdTheme.compactAlgorithm)
+
   return {
-    algorithm: isDark ? antdTheme.darkAlgorithm : antdTheme.defaultAlgorithm,
+    algorithm,
     token: {
-      borderRadius: 10,
-      borderRadiusLG: 12,
-      borderRadiusSM: 8,
+      borderRadius: 8,
+      borderRadiusLG: 10,
+      borderRadiusSM: 6,
       colorBgContainer: c.surface,
       colorBgElevated: c.surface,
       colorBgLayout: c.canvas,
@@ -76,40 +82,45 @@ export function buildTheme(isDark: boolean): ThemeConfig {
       colorPrimary: c.primary,
       colorSuccess: c.success,
       colorText: c.ink,
+      // The dark primary is a light blue, so antd's default white-on-solid text
+      // has almost no contrast against it; solid fills take dark ink instead.
+      colorTextLightSolid: isDark ? DARK.canvas : '#ffffff',
       colorTextDescription: c.inkMuted,
       colorTextSecondary: c.inkMuted,
       colorWarning: c.warning,
-      controlHeight: 38,
+      controlHeight: 34,
+      controlHeightLG: 38,
+      controlHeightSM: 26,
       fontFamily: "Outfit, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
       fontSize: 14,
-      lineHeight: 1.55,
+      fontWeightStrong: 600,
+      lineHeight: 1.5,
       wireframe: false
     },
     components: {
-      Button: { fontWeight: 500, paddingInline: 18 },
+      // antd ships a drop shadow on every button, which at this size reads as a
+      // toy control rather than a tool. Flat, with the border doing the work.
+      Button: {
+        dangerShadow: 'none',
+        defaultShadow: 'none',
+        fontWeight: 500,
+        paddingInline: 14,
+        primaryShadow: 'none'
+      },
       Card: {
         headerBg: 'transparent',
-        headerFontSize: 14,
-        headerHeight: 52,
-        paddingLG: 20
+        headerFontSize: 13,
+        headerHeight: 44,
+        paddingLG: 16
       },
-      Layout: { bodyBg: c.canvas, siderBg: c.surface },
-      Menu: {
-        activeBarWidth: 0,
-        itemActiveBg: c.primarySoft,
-        itemBorderRadius: 10,
-        itemHeight: 40,
-        itemMarginInline: 10,
-        itemSelectedBg: c.primarySoft,
-        itemSelectedColor: c.primary
-      },
+      Segmented: { itemSelectedBg: c.surface, trackBg: c.lineSoft },
       Table: {
         headerBg: 'transparent',
         headerColor: c.inkMuted,
         headerSplitColor: 'transparent',
         rowHoverBg: c.lineSoft
       },
-      Tag: { borderRadiusSM: 6 }
+      Tag: { borderRadiusSM: 5 }
     }
   }
 }

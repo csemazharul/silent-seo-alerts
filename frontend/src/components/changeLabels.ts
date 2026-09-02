@@ -39,3 +39,29 @@ const LABELS: Record<string, string> = {
 
 export const changeLabel = (type: string) =>
   LABELS[type] ?? type.replace(/_/g, ' ').replace(/^\w/, c => c.toUpperCase())
+
+/** Site events recorded alongside checks, mirroring EventRecorder's TYPE_* constants. */
+const EVENT_LABELS: Record<string, string> = {
+  core_updated: __('WordPress updated'),
+  option_changed: __('Setting changed'),
+  plugin_activated: __('Plugin activated'),
+  plugin_deactivated: __('Plugin deactivated'),
+  plugin_updated: __('Plugin updated'),
+  post_saved: __('Content edited'),
+  theme_switched: __('Theme switched'),
+  theme_updated: __('Theme updated')
+}
+
+export const eventLabel = (type: string) =>
+  EVENT_LABELS[type] ?? type.replace(/_/g, ' ').replace(/^\w/, c => c.toUpperCase())
+
+/** Outcome of the last fetch for a monitored page. */
+const RESULT_LABELS: Record<string, string> = {
+  changed: __('Changed'),
+  error: __('Error'),
+  impaired: __('Impaired'),
+  ok: __('OK')
+}
+
+export const resultLabel = (result: string) =>
+  RESULT_LABELS[result] ?? result.replace(/_/g, ' ').replace(/^\w/, c => c.toUpperCase())

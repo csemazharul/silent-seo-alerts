@@ -2,8 +2,9 @@ import { App, Button, Card, Drawer, Empty, Input, Modal, Space, Tag, Timeline, T
 import { useEffect, useState } from 'react'
 import { __ } from '@common/helpers/i18nWrap'
 import { useExplainWithAi, useReopenFinding, useResolveFinding, useSettings } from '@/api/queries'
-import { changeLabel } from '@components/changeLabels'
+import { changeLabel, eventLabel } from '@components/changeLabels'
 import SeverityTag from '@components/SeverityTag'
+import When from '@components/When'
 import { palette } from '@config/theme'
 import type { AiExplanation, Finding } from '@/api/types'
 
@@ -124,7 +125,7 @@ export default function FindingDrawer({ finding, onClose }: Props) {
               __('Site-wide')
             )}
             <span className="mx-2">·</span>
-            {finding.created_at}
+            <When value={finding.created_at} />
             {finding.is_expected && (
               <Tag bordered={false} className="ml-2" color="default">
                 {__('you edited this page')}
@@ -212,8 +213,8 @@ export default function FindingDrawer({ finding, onClose }: Props) {
                   items={finding.attributed_events.map(event => ({
                     children: (
                       <span className="text-sm">
-                        <strong>{event.type.replace(/_/g, ' ')}</strong> {event.subject}
-                        <span className="ml-2 text-xs" style={{ color: palette.inkMuted }}>{event.at}</span>
+                        <strong>{eventLabel(event.type)}</strong> {event.subject}
+                        <When className="ml-2" value={event.at} />
                       </span>
                     )
                   }))}

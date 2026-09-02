@@ -2,7 +2,9 @@ import { Alert, Card, Table, Tag } from 'antd'
 import { useQuery } from '@tanstack/react-query'
 import { __ } from '@common/helpers/i18nWrap'
 import call from '@/api/client'
+import { parseUtc } from '@common/helpers/datetime'
 import PageHeader from '@components/PageHeader'
+import When from '@components/When'
 import { palette } from '@config/theme'
 
 interface BotRow {
@@ -28,11 +30,13 @@ interface SiteStatus {
   impaired: null | { since: string; reason: string }
 }
 
+// Borderless everywhere, to match the severity and status tags on the other
+// screens; a bordered tag here read as a different control entirely.
 const verdictTag = (verdict?: string) => {
-  if (verdict === 'blocked') return <Tag color="error">{__('Blocked')}</Tag>
-  if (verdict === 'allowed') return <Tag color="success">{__('Allowed')}</Tag>
+  if (verdict === 'blocked') return <Tag bordered={false} color="error">{__('Blocked')}</Tag>
+  if (verdict === 'allowed') return <Tag bordered={false} color="success">{__('Allowed')}</Tag>
 
-  return <Tag>{__('Not specified')}</Tag>
+  return <Tag bordered={false}>{__('Not specified')}</Tag>
 }
 
 function Placeholder({ text }: { text: string }) {
@@ -181,12 +185,13 @@ export default function SiteWidePage() {
                 if (!lastSeen) {
                   return (
                     <span className="text-xs" style={{ color: palette.inkFaint }}>
-                      {__('never seen')}
+                      {__('Never seen')}
                     </span>
                   )
                 }
 
-                const daysAgo = (Date.now() - new Date(`${lastSeen}Z`).getTime()) / 86_400_000
+                const seenAt = parseUtc(lastSeen)
+                const daysAgo = seenAt ? (Date.now() - seenAt.getTime()) / 86_400_000 : 0
 
                 return (
                   <span className="flex items-center gap-2 text-sm">
@@ -194,7 +199,7 @@ export default function SiteWidePage() {
                       className="h-1.5 w-1.5 shrink-0 rounded-full"
                       style={{ background: daysAgo > 30 ? palette.warning : palette.success }}
                     />
-                    {lastSeen}
+                    <When value={lastSeen} />
                     <span className="text-xs" style={{ color: palette.inkFaint }}>
                       {row.hits}
                     </span>

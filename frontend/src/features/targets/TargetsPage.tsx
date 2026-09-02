@@ -3,7 +3,9 @@ import { App, Button, Card, Popconfirm, Switch, Table, Tag } from 'antd'
 import { useState } from 'react'
 import { __ } from '@common/helpers/i18nWrap'
 import { useDeleteTarget, useTargets, useUpdateTarget } from '@/api/queries'
+import { resultLabel } from '@components/changeLabels'
 import PageHeader from '@components/PageHeader'
+import When from '@components/When'
 import { palette } from '@config/theme'
 import AddTargetModal from './AddTargetModal'
 import type { Target } from '@/api/types'
@@ -77,9 +79,8 @@ export default function TargetsPage() {
             {
               title: __('Last checked'),
               dataIndex: 'last_checked_at',
-              width: 190,
-              render: (value: null | string) =>
-                value ?? <span style={{ color: palette.inkFaint }}>{__('not yet')}</span>
+              width: 150,
+              render: (value: null | string) => <When fallback={__('Not yet')} value={value} />
             },
             {
               title: __('Result'),
@@ -88,7 +89,7 @@ export default function TargetsPage() {
               render: (result: null | string) =>
                 result ? (
                   <Tag bordered={false} color={RESULT_TONE[result] ?? 'default'}>
-                    {result}
+                    {resultLabel(result)}
                   </Tag>
                 ) : null
             },
@@ -116,7 +117,7 @@ export default function TargetsPage() {
                   description={__('Its history stays in the flight log.')}
                   onConfirm={() => remove(target)}
                 >
-                  <Button danger size="small" type="text">
+                  <Button className="scm-row-remove" size="small" type="text">
                     {__('Remove')}
                   </Button>
                 </Popconfirm>

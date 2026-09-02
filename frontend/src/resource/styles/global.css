@@ -20,18 +20,25 @@
 /*
  * Theme palette. Components reference these through the `palette` export in
  * config/theme.ts, so switching themes is one class change on the root.
+ *
+ * Declared on :root as well as the app root because antd portals drawers,
+ * modals, dropdowns and tooltips to <body>, outside #seo-change-monitor-root.
+ * Left only on the app root, every --scm-* reference inside portalled content
+ * resolves to nothing and the colour is silently dropped. applyTheme mirrors
+ * the state classes onto <html> so those copies switch with the app.
  */
+:root,
 #seo-change-monitor-root {
-  --scm-canvas: #f4f5f7;
+  --scm-canvas: #f5f6f8;
   --scm-surface: #fff;
-  --scm-line: #e6e8eb;
-  --scm-line-soft: #eff1f3;
+  --scm-line: #e3e6ea;
+  --scm-line-soft: #eef0f3;
   --scm-ink: #111827;
-  --scm-ink-muted: #6b7280;
+  --scm-ink-muted: #5f6875;
   --scm-ink-faint: #9ca3af;
-  --scm-primary: #3b5bdb;
+  --scm-primary: #1d4ed8;
   --scm-primary-soft: #eef2ff;
-  --scm-critical: #d92d20;
+  --scm-critical: #c8372a;
   --scm-critical-soft: #fef3f2;
   --scm-warning: #b54708;
   --scm-warning-soft: #fffaeb;
@@ -41,6 +48,14 @@
   --scm-success-soft: #ecfdf3;
   --scm-code-bg: #f7f8fa;
 
+  /* Matches theme.ts controlHeight; the multiple-Select rules below pin
+     themselves to it so both Select shapes stay the same height. */
+  --scm-control-h: 34px;
+  --scm-tag-h: 22px;
+}
+
+/* Layout and typography, app root only: these must not leak onto the page. */
+#seo-change-monitor-root {
   background: var(--scm-canvas);
   color: var(--scm-ink);
   direction: ltr;
@@ -53,18 +68,30 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+/*
+ * Compact density. antd's compactAlgorithm takes buttons and the single Select
+ * to 30px, and the pinned multiple Select has to follow or the filter rows go
+ * back to being uneven. Measured, not assumed.
+ */
+:root.scm-compact,
+#seo-change-monitor-root.compact {
+  --scm-control-h: 30px;
+  --scm-tag-h: 20px;
+}
+
+:root.scm-dark,
 #seo-change-monitor-root.dark {
-  --scm-canvas: #14161b;
-  --scm-surface: #1c1f26;
-  --scm-line: #2b303a;
-  --scm-line-soft: #232831;
+  --scm-canvas: #131519;
+  --scm-surface: #1a1d23;
+  --scm-line: #2a2f38;
+  --scm-line-soft: #222630;
   --scm-ink: #e7eaef;
-  --scm-ink-muted: #9aa2ae;
+  --scm-ink-muted: #98a1ad;
   --scm-ink-faint: #6b7280;
-  --scm-primary: #8098ff;
-  --scm-primary-soft: rgba(128, 152, 255, 16%);
-  --scm-critical: #ff7b72;
-  --scm-critical-soft: rgba(255, 123, 114, 14%);
+  --scm-primary: #8aa8ff;
+  --scm-primary-soft: rgba(138, 168, 255, 16%);
+  --scm-critical: #f27c72;
+  --scm-critical-soft: rgba(242, 124, 114, 14%);
   --scm-warning: #e0a458;
   --scm-warning-soft: rgba(224, 164, 88, 14%);
   --scm-info: #6cb2ff;
@@ -125,10 +152,153 @@ body.toplevel_page_seo-change-monitor #wpfooter {
   box-shadow: none;
 }
 
-/* Lets the theme switch sit at the foot of the sidebar. */
-#seo-change-monitor-root .ant-layout-sider-children {
-  display: flex;
-  flex-direction: column;
+/*
+ * The menu scrolls when the row runs out of room, but a visible scrollbar
+ * sitting under it reads as a broken control. Hidden, not disabled: the menu
+ * still scrolls by wheel, drag and keyboard focus, and the current item is
+ * scrolled into view by TopBar.
+ */
+#seo-change-monitor-root .scm-tabs-scroll {
+  scrollbar-width: none;
+}
+
+#seo-change-monitor-root .scm-tabs-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+/*
+ * Theme trigger. The mode icon carries the meaning, so it is set a size up from
+ * antd's default, with a small muted caret to show the button opens a menu.
+ */
+#seo-change-monitor-root .ant-btn.scm-theme-trigger {
+  color: var(--scm-ink-muted);
+  font-size: 16px;
+}
+
+#seo-change-monitor-root .ant-btn.scm-theme-trigger:hover {
+  background: var(--scm-line-soft);
+  color: var(--scm-ink);
+}
+
+#seo-change-monitor-root .scm-theme-caret {
+  color: var(--scm-ink-faint);
+  font-size: 10px;
+}
+
+/*
+ * Top-bar menu. No track or border around the group: the items sit directly on
+ * the header, and only the current one is marked, with a soft tint rather than
+ * a raised surface, which would be invisible against the header's own colour.
+ *
+ * The zeroed margin has to outrank the `:is(ul, ol) { margin: 0 }` reset above,
+ * which a single class on an id-scoped selector does.
+ */
+#seo-change-monitor-root .scm-tabs {
+  margin: 0;
+  padding: 0;
+}
+
+#seo-change-monitor-root .scm-tab {
+  border-radius: 8px;
+  color: var(--scm-ink-muted);
+  font-weight: 500;
+}
+
+#seo-change-monitor-root .scm-tab .anticon {
+  color: var(--scm-ink-faint);
+}
+
+#seo-change-monitor-root .scm-tab:hover {
+  background: var(--scm-line-soft);
+  color: var(--scm-ink);
+}
+
+#seo-change-monitor-root .scm-tab:hover .anticon {
+  color: var(--scm-ink-muted);
+}
+
+#seo-change-monitor-root .scm-tab.is-current {
+  background: var(--scm-primary-soft);
+  color: var(--scm-primary);
+  font-weight: 600;
+}
+
+#seo-change-monitor-root .scm-tab.is-current .anticon {
+  color: var(--scm-primary);
+}
+
+/*
+ * Row-level destructive actions. Danger red on every row of a table competes
+ * with the rows that are actually in an error state, so these stay muted until
+ * the pointer is on them. The id qualifier outweighs antd's cssinjs output,
+ * which runs at hashPriority "high".
+ */
+#seo-change-monitor-root .ant-btn.scm-row-remove {
+  color: var(--scm-ink-muted);
+}
+
+#seo-change-monitor-root .ant-btn.scm-row-remove:hover {
+  background: var(--scm-critical-soft);
+  color: var(--scm-critical);
+}
+
+/*
+ * A multiple Select sizes its box to the tags inside it, so in a filter row it
+ * stands 14px taller than the single Select next to it and the row loses its
+ * baseline. Pinned to controlHeight instead. Every multiple Select here sets
+ * maxTagCount="responsive", so the selection collapses to "+N" rather than
+ * wrapping, and a fixed height never clips it.
+ *
+ * The id qualifier is what outweighs antd's own cssinjs output, which runs at
+ * hashPriority "high".
+ */
+#seo-change-monitor-root .ant-select-multiple .ant-select-selector {
+  height: var(--scm-control-h);
+  min-height: var(--scm-control-h);
+  padding-block: 0;
+}
+
+/*
+ * antd nests the tags in selector > wrap > overflow > item. The wrap is pinned
+ * to flex-start, so once the selector stops growing to fit its contents the
+ * whole row rides high in the control; each level has to centre in turn.
+ */
+#seo-change-monitor-root .ant-select-multiple .ant-select-selection-wrap {
+  align-self: center;
+}
+
+#seo-change-monitor-root .ant-select-multiple .ant-select-selection-overflow {
+  align-items: center;
+  flex-wrap: nowrap;
+}
+
+#seo-change-monitor-root .ant-select-multiple .ant-select-selection-overflow-item {
+  align-items: center;
+  align-self: center;
+  height: auto;
+}
+
+#seo-change-monitor-root .ant-select-multiple .ant-select-selection-item {
+  align-items: center;
+  height: var(--scm-tag-h);
+  line-height: calc(var(--scm-tag-h) - 2px);
+}
+
+/*
+ * The search box is what the caret is sized from. Left at its natural height it
+ * draws a caret taller than the control and hangs below the border.
+ */
+#seo-change-monitor-root .ant-select-multiple .ant-select-selection-search {
+  height: var(--scm-tag-h);
+}
+
+#seo-change-monitor-root .ant-select-multiple .ant-select-selection-search-input {
+  height: var(--scm-tag-h);
+  line-height: calc(var(--scm-tag-h) - 2px);
+
+  /* antd sets a min-height on the input, which outranks any height we give it
+     no matter how specific the selector, so it has to be reset too. */
+  min-height: var(--scm-tag-h);
 }
 
 /* Themed row hover, since a Tailwind colour class cannot follow the palette. */
@@ -169,7 +339,8 @@ body .scm-drawer.ant-drawer {
 #seo-change-monitor-root .ant-card-head {
   border-bottom-color: var(--scm-line-soft);
   font-weight: 600;
-  min-height: 52px;
+  min-height: 44px;
+  padding-inline: 16px;
 }
 
 /* Tables sit inside cards, so drop the outer border and round the header. */

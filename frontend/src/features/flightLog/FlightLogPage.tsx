@@ -1,10 +1,11 @@
 import { Button, Card, Select, Table, Tag } from 'antd'
 import { useMemo, useState } from 'react'
-import { __ } from '@common/helpers/i18nWrap'
+import { __, sprintf } from '@common/helpers/i18nWrap'
 import { useFindings, useTargets } from '@/api/queries'
 import { changeLabel } from '@components/changeLabels'
 import PageHeader from '@components/PageHeader'
 import SeverityTag from '@components/SeverityTag'
+import When from '@components/When'
 import { palette } from '@config/theme'
 import { selectFilters, useFlightLogStore } from '@/store/flightLogStore'
 import FindingDrawer from './FindingDrawer'
@@ -29,6 +30,7 @@ export default function FlightLogPage() {
 
   const hasFilters =
     store.severity.length > 0 || store.targetId !== undefined || store.status.length !== 1
+  const total = data?.total ?? 0
 
   return (
     <>
@@ -37,48 +39,60 @@ export default function FlightLogPage() {
         title={__('Flight Log')}
       />
 
-      <div className="mb-4 flex flex-wrap items-center gap-2">
-        <Select<Severity[]>
-          allowClear
-          className="min-w-48"
-          mode="multiple"
-          placeholder={__('All severities')}
-          value={store.severity}
-          onChange={store.setSeverity}
-          options={[
-            { label: __('Critical'), value: 'critical' },
-            { label: __('Warning'), value: 'warning' },
-            { label: __('Info'), value: 'info' }
-          ]}
-        />
-        <Select<FindingStatus[]>
-          allowClear
-          className="min-w-48"
-          mode="multiple"
-          placeholder={__('Any status')}
-          value={store.status}
-          onChange={store.setStatus}
-          options={(Object.keys(STATUS_LABELS) as FindingStatus[]).map(status => ({
-            label: STATUS_LABELS[status],
-            value: status
-          }))}
-        />
-        <Select
-          allowClear
-          className="min-w-56"
-          placeholder={__('All pages')}
-          value={store.targetId}
-          onChange={store.setTargetId}
-          options={(targets ?? []).map(target => ({ label: target.label, value: target.id }))}
-        />
-        {hasFilters && (
-          <Button type="text" onClick={store.reset}>
-            {__('Clear filters')}
-          </Button>
-        )}
-      </div>
+      {/* Filters live inside the results card rather than floating above it:
+          they act on the table below, so they read as one surface with it and
+          share its left edge. */}
+      <Card styles={{ body: { padding: 0 } }}>
+        <div
+          className="flex flex-wrap items-center gap-2 border-0 border-b border-solid px-2 py-2.5"
+          style={{ borderColor: palette.lineSoft }}
+        >
+          <Select<Severity[]>
+            allowClear
+            className="w-full sm:w-52"
+            maxTagCount="responsive"
+            mode="multiple"
+            placeholder={__('All severities')}
+            value={store.severity}
+            onChange={store.setSeverity}
+            options={[
+              { label: __('Critical'), value: 'critical' },
+              { label: __('Warning'), value: 'warning' },
+              { label: __('Info'), value: 'info' }
+            ]}
+          />
+          <Select<FindingStatus[]>
+            allowClear
+            className="w-full sm:w-52"
+            maxTagCount="responsive"
+            mode="multiple"
+            placeholder={__('Any status')}
+            value={store.status}
+            onChange={store.setStatus}
+            options={(Object.keys(STATUS_LABELS) as FindingStatus[]).map(status => ({
+              label: STATUS_LABELS[status],
+              value: status
+            }))}
+          />
+          <Select
+            allowClear
+            className="w-full sm:w-52"
+            placeholder={__('All pages')}
+            value={store.targetId}
+            onChange={store.setTargetId}
+            options={(targets ?? []).map(target => ({ label: target.label, value: target.id }))}
+          />
+          {hasFilters && (
+            <Button size="small" type="link" onClick={store.reset}>
+              {__('Clear filters')}
+            </Button>
+          )}
 
-      <Card styles={{ body: { padding: '4px 8px 8px' } }}>
+          <span className="ml-auto pr-1 text-xs tabular-nums" style={{ color: palette.inkMuted }}>
+            {total === 1 ? __('1 change') : sprintf(__('%d changes'), total)}
+          </span>
+        </div>
+
         <Table<Finding>
           dataSource={data?.items ?? []}
           loading={isLoading}
@@ -144,7 +158,8 @@ export default function FlightLogPage() {
             {
               title: __('Detected'),
               dataIndex: 'created_at',
-              width: 180
+              width: 140,
+              render: (at: null | string) => <When value={at} />
             }
           ]}
         />
