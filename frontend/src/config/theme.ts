@@ -115,6 +115,8 @@ export function buildTheme(isDark: boolean, isCompact: boolean): ThemeConfig {
       },
       Segmented: { itemSelectedBg: c.surface, trackBg: c.lineSoft },
       Table: {
+        cellPaddingBlock: 14,
+        cellPaddingInline: 16,
         headerBg: 'transparent',
         headerColor: c.inkMuted,
         headerSplitColor: 'transparent',

@@ -11,7 +11,8 @@ import type {
   FindingsPage,
   PostSearchResult,
   Settings,
-  Target
+  Target,
+  SiteStatusSummary
 } from './types'
 
 export const keys = {
@@ -115,6 +116,12 @@ export const useReopenFinding = () => {
     onSuccess: invalidateAll
   })
 }
+
+export const useSiteStatus = () =>
+  useQuery({
+    queryKey: ['site-status'],
+    queryFn: () => call<SiteStatusSummary>('status/site')
+  })
 
 export const useDashboardSummary = () =>
   useQuery({

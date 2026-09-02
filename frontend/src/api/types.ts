@@ -154,3 +154,16 @@ export interface FindingFilters {
   page?: number
   per_page?: number
 }
+
+export interface SiteBot {
+  slug: string
+  label: string
+  user_agent: string
+  last_seen: null | string
+  hits: number
+}
+
+export interface SiteStatusSummary {
+  bots: SiteBot[]
+  bot_tracking: boolean
+}

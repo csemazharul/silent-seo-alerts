@@ -1,22 +1,32 @@
-import classNames from '@common/helpers/classNames'
+import { ExclamationCircleOutlined, EyeOutlined, WarningOutlined } from '@ant-design/icons'
 import { __ } from '@common/helpers/i18nWrap'
 import { palette } from '@config/theme'
 import type { Severity } from '@/api/types'
+import type { ReactNode } from 'react'
 
-const TONE: Record<Severity, { caption: string; label: string; tone: string }> = {
+const TONE: Record<
+  Severity,
+  { caption: string; icon: ReactNode; label: string; soft: string; tone: string }
+> = {
   critical: {
     caption: __('Affects whether pages can be found'),
+    icon: <ExclamationCircleOutlined />,
     label: __('Critical'),
+    soft: palette.criticalSoft,
     tone: palette.critical
   },
   warning: {
     caption: __('Worth a look when you have a moment'),
+    icon: <WarningOutlined />,
     label: __('Warning'),
+    soft: palette.warningSoft,
     tone: palette.warning
   },
   info: {
     caption: __('Recorded for the history, no action needed'),
+    icon: <EyeOutlined />,
     label: __('Info'),
+    soft: palette.infoSoft,
     tone: palette.info
   }
 }
@@ -29,55 +39,46 @@ interface Props {
 }
 
 /**
- * One card split into three cells rather than three floating cards: the counts
- * are a single reading, and hairline dividers carry that without the padding
- * and drop shadows that three separate surfaces would cost.
+ * Three severity stat cards: icon chip and label on top, the count as the
+ * hero of the card, the caption as the footer. Each card filters the flight
+ * log on click, so there is no "view all" pill - the whole card is the link.
  */
 export default function SeverityStrip({ counts, onSelect }: Props) {
   return (
-    <div
-      className="grid grid-cols-1 overflow-hidden rounded-lg border border-solid sm:grid-cols-3"
-      style={{ background: palette.surface, borderColor: palette.line }}
-    >
-      {ORDER.map((severity, index) => {
-        const { caption, label, tone } = TONE[severity]
+    <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+      {ORDER.map(severity => {
+        const { caption, icon, label, soft, tone } = TONE[severity]
         const count = counts[severity] ?? 0
 
         return (
           <button
             key={severity}
-            className={classNames(
-              'scm-hover flex cursor-pointer items-center gap-4 border-0 border-solid bg-transparent px-5 py-4 text-left transition-colors',
-              // Dividers sit on the leading edge so the card's own border is
-              // never doubled, and flip from horizontal to vertical with the
-              // grid. An inline style cannot carry a breakpoint, so the widths
-              // are classes and only the colour comes from the palette.
-              index > 0 && 'border-t sm:border-l sm:border-t-0'
-            )}
+            className="flex cursor-pointer flex-col items-start gap-3 rounded-lg border border-solid p-5 text-left transition hover:-translate-y-px hover:shadow-sm"
             type="button"
             onClick={() => onSelect(severity)}
-            style={{ borderColor: palette.lineSoft }}
+            style={{ background: palette.surface, borderColor: palette.line }}
           >
+            <span className="flex items-center gap-2.5">
+              <span
+                className="flex h-7 w-7 items-center justify-center rounded-md text-sm"
+                style={{ background: soft, color: tone }}
+              >
+                {icon}
+              </span>
+              <span className="text-[13px] font-semibold" style={{ color: palette.ink }}>
+                {label}
+              </span>
+            </span>
+
             <span
-              className="text-3xl font-semibold tabular-nums leading-none"
-              style={{
-                color: count > 0 ? tone : palette.inkFaint,
-                minWidth: '1.2ch'
-              }}
+              className="text-[32px] font-semibold leading-none"
+              style={{ color: count > 0 ? tone : palette.inkFaint }}
             >
               {count}
             </span>
-            <span className="min-w-0">
-              <span
-                className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide"
-                style={{ color: count > 0 ? tone : palette.inkMuted }}
-              >
-                <span className="block h-1.5 w-1.5 rounded-full bg-current" />
-                {label}
-              </span>
-              <span className="mt-0.5 block text-xs" style={{ color: palette.inkMuted }}>
-                {caption}
-              </span>
+
+            <span className="text-xs" style={{ color: palette.inkMuted }}>
+              {caption}
             </span>
           </button>
         )

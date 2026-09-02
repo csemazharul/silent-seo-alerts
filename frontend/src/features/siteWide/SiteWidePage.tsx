@@ -142,14 +142,13 @@ export default function SiteWidePage() {
             </span>
           }
           loading={isLoading}
-          styles={{ body: { paddingTop: 4 } }}
+          styles={{ body: { padding: 0 } }}
           title={__('AI crawlers')}
         >
         <Table<BotRow>
           dataSource={data?.bots ?? []}
           pagination={false}
           rowKey="slug"
-          size="middle"
           columns={[
             {
               title: __('Crawler'),

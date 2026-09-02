@@ -19,6 +19,8 @@ import {
 import { changeLabel, eventLabel } from '@components/changeLabels'
 import PageHeader from '@components/PageHeader'
 import SeverityStrip from '@components/SeverityStrip'
+import ChangesChart, { CHART_SEVERITIES } from './ChangesChart'
+import CrawlerActivity from './CrawlerActivity'
 import When from '@components/When'
 import { palette } from '@config/theme'
 import { useFlightLogStore } from '@/store/flightLogStore'
@@ -140,71 +142,92 @@ export default function DashboardPage() {
         <SeverityStrip counts={counts} onSelect={openSeverity} />
 
         <div className="grid grid-cols-1 items-start gap-4 lg:grid-cols-5">
-          <Card
-            className="lg:col-span-3"
-            extra={
-              items.length > 0 ? (
-                <Button size="small" type="link" onClick={() => navigate('/log')}>
-                  {__('View all')}
-                </Button>
-              ) : null
-            }
-            title={__('Needs your attention')}
-          >
-            {items.length === 0 ? (
-              <div className="flex flex-col items-center gap-1 px-4 py-10 text-center">
-                <CheckCircleFilled style={{ color: palette.success, fontSize: 22 }} />
-                <p className="m-0 mt-2 text-sm font-medium" style={{ color: palette.ink }}>
-                  {__('Nothing unexpected has changed.')}
-                </p>
-                <p className="m-0 max-w-xs text-xs" style={{ color: palette.inkMuted }}>
-                  {__('We will tell you the moment something does.')}
-                </p>
-              </div>
-            ) : (
-              // Rows are full-bleed against the card padding so the hover band
-              // and the dividers reach its edges the way a table's would.
-              <ul className="-mx-4 -my-2 flex list-none flex-col p-0">
-                {items.map((finding, index) => (
-                  <li key={finding.id}>
-                    <button
-                      className={classNames(
-                        'scm-hover group flex w-full cursor-pointer items-center gap-3 border-0 border-solid bg-transparent px-4 py-2.5 text-left transition-colors',
-                        index > 0 && 'border-t'
-                      )}
-                      style={{ borderColor: palette.lineSoft }}
-                      type="button"
-                      onClick={() => navigate('/log')}
+          <div className="flex flex-col gap-4 lg:col-span-3">
+            <Card
+              extra={
+                <div className="flex items-center gap-4">
+                  {CHART_SEVERITIES.map(({ label, tone }) => (
+                    <span
+                      key={label}
+                      className="flex items-center gap-1.5 text-xs"
+                      style={{ color: palette.inkMuted }}
                     >
-                      <span
-                        className="h-1.5 w-1.5 shrink-0 rounded-full"
-                        style={{ background: SEVERITY_TONE[finding.severity] }}
-                      />
-                      <span className="min-w-0 flex-1">
+                      <span className="h-2.5 w-2.5 rounded-sm" style={{ background: tone }} />
+                      {label}
+                    </span>
+                  ))}
+                </div>
+              }
+              title={__('Changes over the last 14 days')}
+            >
+              <ChangesChart />
+            </Card>
+
+            <Card
+              extra={
+                items.length > 0 ? (
+                  <Button size="small" type="link" onClick={() => navigate('/log')}>
+                    {__('View all')}
+                  </Button>
+                ) : null
+              }
+              title={__('Needs your attention')}
+            >
+              {items.length === 0 ? (
+                <div className="flex flex-col items-center gap-1 px-4 py-10 text-center">
+                  <CheckCircleFilled style={{ color: palette.success, fontSize: 22 }} />
+                  <p className="m-0 mt-2 text-sm font-medium" style={{ color: palette.ink }}>
+                    {__('Nothing unexpected has changed.')}
+                  </p>
+                  <p className="m-0 max-w-xs text-xs" style={{ color: palette.inkMuted }}>
+                    {__('We will tell you the moment something does.')}
+                  </p>
+                </div>
+              ) : (
+                // Rows are full-bleed against the card padding so the hover band
+                // and the dividers reach its edges the way a table's would.
+                <ul className="-mx-4 -my-2 flex list-none flex-col p-0">
+                  {items.map((finding, index) => (
+                    <li key={finding.id}>
+                      <button
+                        className={classNames(
+                          'scm-hover group flex w-full cursor-pointer items-center gap-3 border-0 border-solid bg-transparent px-4 py-2.5 text-left transition-colors',
+                          index > 0 && 'border-t'
+                        )}
+                        style={{ borderColor: palette.lineSoft }}
+                        type="button"
+                        onClick={() => navigate('/log')}
+                      >
                         <span
-                          className="block truncate text-sm font-medium"
-                          style={{ color: palette.ink }}
-                        >
-                          {changeLabel(finding.change_type)}
+                          className="h-1.5 w-1.5 shrink-0 rounded-full"
+                          style={{ background: SEVERITY_TONE[finding.severity] }}
+                        />
+                        <span className="min-w-0 flex-1">
+                          <span
+                            className="block truncate text-sm font-medium"
+                            style={{ color: palette.ink }}
+                          >
+                            {changeLabel(finding.change_type)}
+                          </span>
+                          <span
+                            className="block truncate text-xs"
+                            style={{ color: palette.inkMuted }}
+                          >
+                            {finding.target_label ?? finding.target_url ?? __('Site-wide')}
+                          </span>
                         </span>
-                        <span
-                          className="block truncate text-xs"
-                          style={{ color: palette.inkMuted }}
-                        >
-                          {finding.target_label ?? finding.target_url ?? __('Site-wide')}
-                        </span>
-                      </span>
-                      <When className="hidden shrink-0 sm:block" value={finding.created_at} />
-                      <RightOutlined
-                        className="shrink-0 text-xs opacity-0 transition-opacity group-hover:opacity-100"
-                        style={{ color: palette.inkFaint }}
-                      />
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </Card>
+                        <When className="hidden shrink-0 sm:block" value={finding.created_at} />
+                        <RightOutlined
+                          className="shrink-0 text-xs opacity-0 transition-opacity group-hover:opacity-100"
+                          style={{ color: palette.inkFaint }}
+                        />
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </Card>
+          </div>
 
           <div className="flex flex-col gap-4 lg:col-span-2">
             <Card title={__('Monitoring status')}>
@@ -230,6 +253,10 @@ export default function DashboardPage() {
                   value={summary?.last_run?.status ?? __('never run')}
                 />
               </dl>
+            </Card>
+
+            <Card title={__('AI crawler visits')}>
+              <CrawlerActivity />
             </Card>
 
             <Card title={__('Recent site activity')}>

@@ -48,6 +48,10 @@
   --scm-success-soft: #ecfdf3;
   --scm-code-bg: #f7f8fa;
 
+  --scm-viz-critical: #c8372a;
+  --scm-viz-warning: #b54708;
+  --scm-viz-info: #175cd3;
+
   /* Matches theme.ts controlHeight; the multiple-Select rules below pin
      themselves to it so both Select shapes stay the same height. */
   --scm-control-h: 34px;
@@ -99,6 +103,9 @@
   --scm-success: #4ec98e;
   --scm-success-soft: rgba(78, 201, 142, 14%);
   --scm-code-bg: #171a20;
+  --scm-viz-critical: #d84a3d;
+  --scm-viz-warning: #b8742c;
+  --scm-viz-info: #3b82d4;
 }
 
 .dark .ql-toolbar .ql-picker-label,
@@ -346,6 +353,15 @@ body .scm-drawer.ant-drawer {
 /* Tables sit inside cards, so drop the outer border and round the header. */
 #seo-change-monitor-root .ant-table {
   background: transparent;
+}
+
+/*
+ * The tables sit in cards with no body padding, so the cells own the inset.
+ * The pagination row is outside the table element and would otherwise sit flush
+ * against the card edge, out of line with every column.
+ */
+#seo-change-monitor-root .ant-table-wrapper .ant-table-pagination {
+  padding-inline: 16px;
 }
 
 #seo-change-monitor-root .ant-table-thead > tr > th {

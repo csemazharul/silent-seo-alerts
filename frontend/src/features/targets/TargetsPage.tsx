@@ -1,7 +1,7 @@
 import { PlusOutlined } from '@ant-design/icons'
 import { App, Button, Card, Popconfirm, Switch, Table, Tag } from 'antd'
 import { useState } from 'react'
-import { __ } from '@common/helpers/i18nWrap'
+import { __, sprintf } from '@common/helpers/i18nWrap'
 import { useDeleteTarget, useTargets, useUpdateTarget } from '@/api/queries'
 import { resultLabel } from '@components/changeLabels'
 import PageHeader from '@components/PageHeader'
@@ -50,13 +50,16 @@ export default function TargetsPage() {
         title={__('Monitored Pages')}
       />
 
-      <Card styles={{ body: { padding: '4px 8px 8px' } }}>
+      <Card styles={{ body: { padding: 0 } }}>
         <Table<Target>
           dataSource={targets ?? []}
           loading={isLoading}
-          pagination={{ pageSize: 20, hideOnSinglePage: true }}
+          pagination={{
+            pageSize: 20,
+            hideOnSinglePage: false,
+            showTotal: (count, range) => sprintf(__('%d-%d of %d'), range[0], range[1], count)
+          }}
           rowKey="id"
-          size="middle"
           columns={[
             {
               title: __('Page'),

@@ -44,7 +44,7 @@ export default function FlightLogPage() {
           share its left edge. */}
       <Card styles={{ body: { padding: 0 } }}>
         <div
-          className="flex flex-wrap items-center gap-2 border-0 border-b border-solid px-2 py-2.5"
+          className="flex flex-wrap items-center gap-2 border-0 border-b border-solid px-4 py-3"
           style={{ borderColor: palette.lineSoft }}
         >
           <Select<Severity[]>
@@ -96,7 +96,6 @@ export default function FlightLogPage() {
           loading={isLoading}
           rowClassName="cursor-pointer"
           rowKey="id"
-          size="middle"
           onRow={finding => ({ onClick: () => setSelected(finding) })}
           locale={{
             emptyText: (
@@ -115,7 +114,10 @@ export default function FlightLogPage() {
             pageSize: data?.per_page ?? 20,
             total: data?.total ?? 0,
             showSizeChanger: false,
-            hideOnSinglePage: true,
+            // Kept on a single page too: it gives the table a footer and says
+            // how much is on screen, which the bare table did not.
+            hideOnSinglePage: false,
+            showTotal: (count, range) => sprintf(__('%d-%d of %d'), range[0], range[1], count),
             onChange: store.setPage
           }}
           columns={[
