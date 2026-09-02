@@ -1,0 +1,430 @@
+/*
+ * Deliberately unlayered. Wrapping these in @layer put every utility below
+ * wp-admin's own unlayered rules, so things like `p { margin: 1em 0 }` beat
+ * our spacing classes. Preflight is off (see tailwind.config.mjs), so nothing
+ * here leaks outside the components that use it.
+ */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* wp-admin styles bare elements; neutralise that inside our app only. */
+#seo-change-monitor-root :is(p, h1, h2, h3, h4, ul, ol, dl, dd, figure) {
+  margin: 0;
+}
+
+#seo-change-monitor-root :is(ul, ol) {
+  padding: 0;
+}
+
+/*
+ * Theme palette. Components reference these through the `palette` export in
+ * config/theme.ts, so switching themes is one class change on the root.
+ */
+#seo-change-monitor-root {
+  --scm-canvas: #f4f5f7;
+  --scm-surface: #fff;
+  --scm-line: #e6e8eb;
+  --scm-line-soft: #eff1f3;
+  --scm-ink: #111827;
+  --scm-ink-muted: #6b7280;
+  --scm-ink-faint: #9ca3af;
+  --scm-primary: #3b5bdb;
+  --scm-primary-soft: #eef2ff;
+  --scm-critical: #d92d20;
+  --scm-critical-soft: #fef3f2;
+  --scm-warning: #b54708;
+  --scm-warning-soft: #fffaeb;
+  --scm-info: #175cd3;
+  --scm-info-soft: #eff8ff;
+  --scm-success: #067647;
+  --scm-success-soft: #ecfdf3;
+  --scm-code-bg: #f7f8fa;
+
+  background: var(--scm-canvas);
+  color: var(--scm-ink);
+  direction: ltr;
+  font-family: var(--font-family);
+  font-size: 16px;
+  height: 100%;
+  isolation: isolate;
+  overflow: auto;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#seo-change-monitor-root.dark {
+  --scm-canvas: #14161b;
+  --scm-surface: #1c1f26;
+  --scm-line: #2b303a;
+  --scm-line-soft: #232831;
+  --scm-ink: #e7eaef;
+  --scm-ink-muted: #9aa2ae;
+  --scm-ink-faint: #6b7280;
+  --scm-primary: #8098ff;
+  --scm-primary-soft: rgba(128, 152, 255, 16%);
+  --scm-critical: #ff7b72;
+  --scm-critical-soft: rgba(255, 123, 114, 14%);
+  --scm-warning: #e0a458;
+  --scm-warning-soft: rgba(224, 164, 88, 14%);
+  --scm-info: #6cb2ff;
+  --scm-info-soft: rgba(108, 178, 255, 14%);
+  --scm-success: #4ec98e;
+  --scm-success-soft: rgba(78, 201, 142, 14%);
+  --scm-code-bg: #171a20;
+}
+
+.dark .ql-toolbar .ql-picker-label,
+.dark .ql-editor :is(h1, h2, h3) {
+  color: #fff;
+}
+
+.dark .ql-toolbar .ql-stroke {
+  stroke: #fff;
+}
+
+/*
+ * wp-admin wraps page content in a 20px left gutter and 65px of bottom padding.
+ * On our own screens the app owns the whole canvas, so strip both and sit flush
+ * against the admin menu.
+ */
+body.toplevel_page_seo-change-monitor #wpcontent {
+  padding-left: 0;
+}
+
+body.toplevel_page_seo-change-monitor #wpbody-content {
+  padding-bottom: 0;
+}
+
+body.toplevel_page_seo-change-monitor #wpfooter {
+  display: none;
+}
+
+.h-full-wp {
+  /* Viewport minus the admin bar, which is 32px on desktop. */
+  height: calc(100vh - 32px);
+}
+
+@media screen and (max-width: 782px) {
+  .h-full-wp {
+    height: calc(100vh - 46px);
+  }
+}
+
+/*
+ * A form's last field carries the same 24px bottom margin as the rest, which
+ * leaves a dead white strip at the foot of every card. Close it up.
+ */
+#seo-change-monitor-root .ant-card-body > .ant-form-item:last-child,
+#seo-change-monitor-root .ant-card-body > *:last-child > .ant-form-item:last-child {
+  margin-bottom: 0;
+}
+
+/* Cards: quiet border, no heavy shadow, consistent radius. */
+#seo-change-monitor-root .ant-card {
+  box-shadow: none;
+}
+
+/* Lets the theme switch sit at the foot of the sidebar. */
+#seo-change-monitor-root .ant-layout-sider-children {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Themed row hover, since a Tailwind colour class cannot follow the palette. */
+#seo-change-monitor-root .scm-hover:hover {
+  background: var(--scm-line-soft);
+}
+
+/*
+ * Drawers portal to <body>, so they land outside #seo-change-monitor-root and
+ * start at viewport top. wp-admin's toolbar is fixed at z-index 99999, far above
+ * the drawer's 1000, so it covers the drawer header and its buttons. Offsetting
+ * the top edge is enough: `inset: 0` keeps the bottom pinned, so the height
+ * corrects itself.
+ */
+
+/*
+ * Selector weight matters here: antd's cssinjs runs at hashPriority "high" and
+ * emits `.css-hash.ant-drawer { inset: 0 }`, so a lone `.scm-drawer` loses.
+ * Qualifying with `body` outweighs it.
+ */
+body .scm-drawer.ant-drawer {
+  top: 32px;
+}
+
+@media screen and (max-width: 782px) {
+  body .scm-drawer.ant-drawer {
+    top: 46px; /* wp-admin's toolbar is taller on small screens */
+  }
+}
+
+@media screen and (max-width: 600px) {
+  body .scm-drawer.ant-drawer {
+    top: 0; /* below 600px the toolbar scrolls away instead of staying fixed */
+  }
+}
+
+
+#seo-change-monitor-root .ant-card-head {
+  border-bottom-color: var(--scm-line-soft);
+  font-weight: 600;
+  min-height: 52px;
+}
+
+/* Tables sit inside cards, so drop the outer border and round the header. */
+#seo-change-monitor-root .ant-table {
+  background: transparent;
+}
+
+#seo-change-monitor-root .ant-table-thead > tr > th {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+/* Code blocks (robots.txt, raw values). */
+#seo-change-monitor-root .scm-code {
+  background: var(--scm-code-bg);
+  border: 1px solid var(--scm-line-soft);
+  border-radius: 10px;
+  color: var(--scm-ink);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 12px;
+  line-height: 1.6;
+  margin: 0;
+  overflow: auto;
+  padding: 12px 14px;
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+}
+
+::-webkit-datetime-edit {
+  line-height: 1;
+}
+
+body,
+html {
+  font-optical-sizing: auto;
+  height: 100%;
+}
+
+#seo-change-monitor-root * {
+  box-sizing: border-box;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizelegibility;
+}
+
+svg {
+  pointer-events: none;
+  display: inline-block;
+}
+
+.ant-btn:active {
+  scale: 0.98;
+  translate: 0 1px;
+}
+
+.link-reset:focus {
+  border: 0;
+  outline: 0;
+  box-shadow: none;
+}
+
+.loader {
+  background: var(--bg);
+  background-image: linear-gradient(90deg, var(--bg-5) 0, var(--bg-10) 30px, var(--bg-5) 60px);
+  background-size: 200%;
+  animation: skeleton 1s infinite ease-out;
+}
+
+a:focus {
+  box-shadow: initial;
+}
+
+::-webkit-scrollbar-thumb {
+  border-radius: 100vw;
+  background-color: #a9a9a9b8;
+}
+
+::-webkit-scrollbar {
+  width: 0.4em;
+  padding: 20px;
+}
+
+.dropDownTippy {
+  background-color: var(--bg) !important;
+  border: 1px solid var(--bg-10) !important;
+}
+
+.sticky-tab > .ant-tabs-nav {
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 2 !important;
+}
+
+@keyframes skeleton {
+  0% {
+    background-position: calc(100%);
+  }
+
+  60%,
+  100% {
+    background-position: -100%;
+  }
+}
+
+@keyframes animate-stroke {
+  0% {
+    stroke-dashoffset: 0;
+  }
+
+  100% {
+    stroke-dashoffset: -150px;
+  }
+}
+
+@keyframes gradient-animation {
+  0%,
+  100% {
+    background-position: 0 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+.variable-tree .ant-tree-node-content-wrapper {
+  background-color: transparent !important;
+  cursor: auto !important;
+  max-width: 100%;
+}
+
+.capitalize {
+  text-transform: capitalize;
+}
+
+/* quill editor */
+
+.ql-toolbar.ql-snow {
+  @apply bg-slate-100 dark:border-slate-700 dark:bg-slate-900;
+
+  border-top-right-radius: 10px;
+  border-top-left-radius: 10px;
+}
+
+.ql-container.ql-snow {
+  @apply bg-white dark:bg-slate-950;
+
+  border-bottom-right-radius: 10px;
+  border-bottom-left-radius: 10px;
+}
+
+.customAppCollapse .ant-collapse-header {
+  align-items: center !important;
+}
+
+.customAppCollapse .ant-collapse-content-box {
+  padding: 0 !important;
+}
+
+.anticon-plus-square.ant-tree-switcher-line-icon,
+.anticon-minus-square.ant-tree-switcher-line-icon {
+  pointer-events: none;
+}
+
+.copy-to-clipboard-container {
+  margin-top: 0;
+}
+
+/* scroll bar style */
+.scroller {
+  --scrollbar-color-thumb: #c1c1c1;
+  --scrollbar-color-track: transparent;
+  --scrollbar-width: auto;
+  --scrollbar-width-legacy: 0.75rem;
+}
+
+.scroller.thin {
+  --scrollbar-width: thin;
+  --scrollbar-width-legacy: 0.5rem;
+}
+
+[color-scheme='dark'] .scroller {
+  --scrollbar-color-thumb: #686868;
+}
+
+@supports (scrollbar-width: auto) {
+  .scroller {
+    scrollbar-color: var(--scrollbar-color-thumb) var(--scrollbar-color-track);
+    scrollbar-width: var(--scrollbar-width);
+  }
+}
+
+@supports selector(::-webkit-scrollbar) {
+  .scroller:hover {
+    --safari-fix: ;
+
+    /* This custom property forces Safari to re-render the scrollbars on hover */
+  }
+
+  .scroller::-webkit-scrollbar-thumb {
+    background: transparent;
+  }
+
+  .scroller::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .scroller:hover::-webkit-scrollbar-thumb {
+    background: var(--scrollbar-color-thumb);
+  }
+
+  .scroller:hover::-webkit-scrollbar-track {
+    background: var(--scrollbar-color-track);
+  }
+
+  .scroller::-webkit-scrollbar {
+    max-width: var(--scrollbar-width-legacy);
+    max-height: var(--scrollbar-width-legacy);
+  }
+}
+
+.ant-space-compact > *:last-child .mix-tag-input {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+.drawer-decoration::before {
+  content: '';
+  background: transparent;
+  height: calc(100% - 42px);
+  width: 2em;
+  position: absolute;
+  left: -32px;
+  top: 35px;
+  border-radius: 0 0.6875rem 0.6875rem 0;
+  z-index: -1;
+  border-bottom: 0;
+  border-left: 0;
+  box-shadow: 13px 0 0 0 var(--wp-bg-color);
+}
+
+.drawer-decoration::after {
+  content: '';
+  background: transparent;
+  height: calc(100% - 28px);
+  width: 2em;
+  position: absolute;
+  right: 10px;
+  bottom: 7px;
+  top: 30px;
+  border-radius: 0 0 0.6875rem;
+  z-index: -1;
+  border-bottom: 0;
+  border-right: 0;
+  box-shadow: 17px 0 0 0 var(--wp-bg-color);
+}
