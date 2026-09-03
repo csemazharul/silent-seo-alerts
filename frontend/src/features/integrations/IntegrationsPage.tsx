@@ -76,10 +76,7 @@ export default function IntegrationsPage() {
 
   return (
     <div className="mx-auto max-w-2xl">
-      <PageHeader
-        description={__('Connect the plugin to services you already use. Nothing here is on by default.')}
-        title={__('Integrations')}
-      />
+      <PageHeader title={__('Integrations')} />
 
       {/*
         Spacing lives on this container, not on the cards: antd's cssinjs runs at
@@ -259,7 +256,7 @@ export default function IntegrationsPage() {
           <Form.Item
             className="mb-0"
             extra={__(
-              'Explanations stop once this month\'s estimated spend reaches the cap. 0 means no cap.'
+              "Explanations stop once this month's estimated spend reaches the cap. 0 means no cap."
             )}
             label={__('Monthly spending cap (USD)')}
             name="ai_monthly_cap"
@@ -269,7 +266,7 @@ export default function IntegrationsPage() {
         </Card>
 
         <div
-          className="flex items-center gap-3 rounded-xl border border-solid px-5 py-4"
+          className="rounded-xl flex items-center gap-3 border border-solid px-5 py-4"
           style={{ background: palette.surface, borderColor: palette.line }}
         >
           <Button htmlType="submit" loading={updateSettings.isPending} type="primary">

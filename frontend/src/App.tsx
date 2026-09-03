@@ -29,7 +29,10 @@ function Shell() {
       <TopBar />
 
       <main className="scroller thin flex-1 overflow-auto">
-        <div className="mx-auto w-full max-w-[1240px] px-5 py-6 lg:px-8">
+        {/* Full width like the header, with a generous ceiling so cards do
+            not stretch absurdly on a 4K display. Reading-weight pages
+            (Settings, Integrations) cap their own column narrower. */}
+        <div className="mx-auto w-full max-w-[1800px] px-6 py-6 lg:px-8">
           <Routes>
             <Route element={<DashboardPage />} path="/" />
             <Route element={<TargetsPage />} path="/pages" />

@@ -46,7 +46,6 @@ export default function TargetsPage() {
             {__('Add page')}
           </Button>
         }
-        description={__('Pages checked on every run. Switch off anything you do not need watched.')}
         title={__('Monitored Pages')}
       />
 

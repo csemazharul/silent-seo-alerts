@@ -1,4 +1,16 @@
-import { App, Button, Card, Drawer, Empty, Input, Modal, Space, Tag, Timeline, Typography } from 'antd'
+import {
+  App,
+  Button,
+  Card,
+  Drawer,
+  Empty,
+  Input,
+  Modal,
+  Space,
+  Tag,
+  Timeline,
+  Typography
+} from 'antd'
 import { useEffect, useState } from 'react'
 import { __ } from '@common/helpers/i18nWrap'
 import { useExplainWithAi, useReopenFinding, useResolveFinding, useSettings } from '@/api/queries'
@@ -10,7 +22,11 @@ import type { AiExplanation, Finding } from '@/api/types'
 
 const renderValue = (value: unknown) => {
   if (value === null || value === undefined || value === '') {
-    return <span className="italic" style={{ color: palette.inkFaint }}>{__('(empty)')}</span>
+    return (
+      <span className="italic" style={{ color: palette.inkFaint }}>
+        {__('(empty)')}
+      </span>
+    )
   }
 
   if (typeof value === 'object') {
@@ -135,13 +151,19 @@ export default function FindingDrawer({ finding, onClose }: Props) {
 
           <Card size="small" title={__('What changed')}>
             <div className="mb-4">
-              <div className="mb-1.5 text-xs font-semibold uppercase tracking-wide" style={{ color: palette.inkFaint }}>
+              <div
+                className="mb-1.5 text-xs font-semibold uppercase tracking-wide"
+                style={{ color: palette.inkFaint }}
+              >
                 {__('Before')}
               </div>
               {renderValue(finding.before)}
             </div>
             <div>
-              <div className="mb-1.5 text-xs font-semibold uppercase tracking-wide" style={{ color: palette.inkFaint }}>
+              <div
+                className="mb-1.5 text-xs font-semibold uppercase tracking-wide"
+                style={{ color: palette.inkFaint }}
+              >
                 {__('After')}
               </div>
               {renderValue(finding.after)}
@@ -152,15 +174,15 @@ export default function FindingDrawer({ finding, onClose }: Props) {
             <div className="flex flex-col gap-3 text-sm">
               <div>
                 <Typography.Text strong>{__('What happened')}</Typography.Text>
-                <p className="mt-1 mb-0">{finding.explanation.what}</p>
+                <p className="mb-0 mt-1">{finding.explanation.what}</p>
               </div>
               <div>
                 <Typography.Text strong>{__('Why it matters')}</Typography.Text>
-                <p className="mt-1 mb-0">{finding.explanation.why}</p>
+                <p className="mb-0 mt-1">{finding.explanation.why}</p>
               </div>
               <div>
                 <Typography.Text strong>{__('What to check')}</Typography.Text>
-                <p className="mt-1 mb-0">{finding.explanation.check}</p>
+                <p className="mb-0 mt-1">{finding.explanation.check}</p>
               </div>
             </div>
           </Card>
@@ -182,7 +204,7 @@ export default function FindingDrawer({ finding, onClose }: Props) {
               {aiText ? (
                 <>
                   <p className="m-0 text-sm">{aiText.text}</p>
-                  <p className="mt-2 mb-0 text-xs" style={{ color: palette.inkFaint }}>
+                  <p className="mb-0 mt-2 text-xs" style={{ color: palette.inkFaint }}>
                     {__('Written by')} {aiText.model}
                     {aiText.cached ? ` · ${__('cached, no new API call')}` : ''} ·{' '}
                     {__('an interpretation of the values above, not a measurement')}
@@ -207,7 +229,9 @@ export default function FindingDrawer({ finding, onClose }: Props) {
             ) : (
               <>
                 <Typography.Text type="secondary" className="mb-3 block text-xs">
-                  {__('These happened shortly before. They may be related, but we cannot be certain.')}
+                  {__(
+                    'These happened shortly before. They may be related, but we cannot be certain.'
+                  )}
                 </Typography.Text>
                 <Timeline
                   items={finding.attributed_events.map(event => ({

@@ -41,7 +41,7 @@ interface Props {
 /**
  * Three severity stat cards: icon chip and label on top, the count as the
  * hero of the card, the caption as the footer. Each card filters the flight
- * log on click, so there is no "view all" pill - the whole card is the link.
+ * log on click.
  */
 export default function SeverityStrip({ counts, onSelect }: Props) {
   return (

@@ -21,6 +21,7 @@ import PageHeader from '@components/PageHeader'
 import SeverityStrip from '@components/SeverityStrip'
 import ChangesChart, { CHART_SEVERITIES } from './ChangesChart'
 import CrawlerActivity from './CrawlerActivity'
+import TypeBreakdown from './TypeBreakdown'
 import When from '@components/When'
 import { palette } from '@config/theme'
 import { useFlightLogStore } from '@/store/flightLogStore'
@@ -107,7 +108,6 @@ export default function DashboardPage() {
             </Button>
           </>
         }
-        description={__('What changed on your pages, and what it means.')}
         title={__('Dashboard')}
       />
 
@@ -139,10 +139,9 @@ export default function DashboardPage() {
           />
         )}
 
-        <SeverityStrip counts={counts} onSelect={openSeverity} />
-
         <div className="grid grid-cols-1 items-start gap-4 lg:grid-cols-5">
           <div className="flex flex-col gap-4 lg:col-span-3">
+            <SeverityStrip counts={counts} onSelect={openSeverity} />
             <Card
               extra={
                 <div className="flex items-center gap-4">
@@ -253,6 +252,10 @@ export default function DashboardPage() {
                   value={summary?.last_run?.status ?? __('never run')}
                 />
               </dl>
+            </Card>
+
+            <Card title={__('Change types · last 14 days')}>
+              <TypeBreakdown />
             </Card>
 
             <Card title={__('AI crawler visits')}>

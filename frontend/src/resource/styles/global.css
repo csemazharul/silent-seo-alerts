@@ -51,6 +51,10 @@
   --scm-viz-critical: #c8372a;
   --scm-viz-warning: #b54708;
   --scm-viz-info: #175cd3;
+  --scm-cat-1: #2a78d6;
+  --scm-cat-2: #eb6834;
+  --scm-cat-3: #1baf7a;
+  --scm-cat-4: #eda100;
 
   /* Matches theme.ts controlHeight; the multiple-Select rules below pin
      themselves to it so both Select shapes stay the same height. */
@@ -106,6 +110,10 @@
   --scm-viz-critical: #d84a3d;
   --scm-viz-warning: #b8742c;
   --scm-viz-info: #3b82d4;
+  --scm-cat-1: #3987e5;
+  --scm-cat-2: #d95926;
+  --scm-cat-3: #199e70;
+  --scm-cat-4: #c98500;
 }
 
 .dark .ql-toolbar .ql-picker-label,

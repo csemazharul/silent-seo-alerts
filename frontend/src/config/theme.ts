@@ -20,7 +20,6 @@ export const palette = {
   lineSoft: 'var(--scm-line-soft)',
   primary: 'var(--scm-primary)',
   primarySoft: 'var(--scm-primary-soft)',
-  raised: 'var(--scm-raised)',
   success: 'var(--scm-success)',
   successSoft: 'var(--scm-success-soft)',
   surface: 'var(--scm-surface)',

@@ -25,8 +25,6 @@ export default function SettingsPage() {
     })
   }
 
-
-
   const sendNow = () => {
     sendReport.mutate(undefined, {
       onSuccess: () => message.success(__('Report sent.')),
@@ -54,10 +52,7 @@ export default function SettingsPage() {
 
   return (
     <div className="mx-auto max-w-2xl">
-      <PageHeader
-        description={__('How often to check, and when to email you.')}
-        title={__('Settings')}
-      />
+      <PageHeader title={__('Settings')} />
 
       {/*
         Spacing lives on this container, not on the cards: antd's cssinjs runs at
@@ -91,7 +86,9 @@ export default function SettingsPage() {
 
           <Form.Item
             className="mb-0"
-            extra={__('0 keeps everything forever. Unresolved critical findings are never deleted.')}
+            extra={__(
+              '0 keeps everything forever. Unresolved critical findings are never deleted.'
+            )}
             label={__('Keep history for (days)')}
             name="retention_days"
           >
@@ -132,10 +129,20 @@ export default function SettingsPage() {
         <Card
           extra={
             <Space>
-              <Button disabled={isLoading} loading={previewReport.isPending} size="small" onClick={preview}>
+              <Button
+                disabled={isLoading}
+                loading={previewReport.isPending}
+                size="small"
+                onClick={preview}
+              >
                 {__('Preview')}
               </Button>
-              <Button disabled={isLoading} loading={sendReport.isPending} size="small" onClick={sendNow}>
+              <Button
+                disabled={isLoading}
+                loading={sendReport.isPending}
+                size="small"
+                onClick={sendNow}
+              >
                 {__('Send now')}
               </Button>
             </Space>
@@ -162,7 +169,11 @@ export default function SettingsPage() {
           </Form.Item>
 
           <div className="flex gap-3">
-            <Form.Item className="mb-5 flex-1" label={__('Your business name')} name="report_brand_name">
+            <Form.Item
+              className="mb-5 flex-1"
+              label={__('Your business name')}
+              name="report_brand_name"
+            >
               <Input placeholder={__('Shown in place of the plugin name')} />
             </Form.Item>
             <Form.Item className="mb-5 w-32" label={__('Accent colour')} name="report_brand_color">
@@ -199,7 +210,7 @@ export default function SettingsPage() {
         </Card>
 
         <div
-          className="flex items-center gap-3 rounded-xl border border-solid px-5 py-4"
+          className="rounded-xl flex items-center gap-3 border border-solid px-5 py-4"
           style={{ background: palette.surface, borderColor: palette.line }}
         >
           <Button htmlType="submit" loading={updateSettings.isPending} type="primary">

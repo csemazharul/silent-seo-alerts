@@ -2,9 +2,9 @@ import { useEffect, useRef, useState } from 'react'
 import { __ } from '@common/helpers/i18nWrap'
 import { useFindings } from '@/api/queries'
 import { palette } from '@config/theme'
+import { WINDOW_DAYS as DAYS, recentDays } from './recentWindow'
 import type { Finding, Severity } from '@/api/types'
 
-const DAYS = 14
 const HEIGHT = 200
 const MARGIN = { top: 8, right: 8, bottom: 22, left: 30 }
 const MAX_COLUMN = 24
@@ -25,12 +25,6 @@ export const CHART_SEVERITIES: { key: Severity; label: string; tone: string }[] 
 ]
 
 const BY_KEY = new Map(CHART_SEVERITIES.map(s => [s.key, s]))
-
-/** The last N UTC days as 'YYYY-MM-DD', oldest first — matching created_at. */
-const recentDays = (): string[] =>
-  Array.from({ length: DAYS }, (_, i) =>
-    new Date(Date.now() - (DAYS - 1 - i) * 86_400_000).toISOString().slice(0, 10)
-  )
 
 const dayLabel = (iso: string) =>
   new Date(`${iso}T00:00:00Z`).toLocaleDateString(undefined, {
