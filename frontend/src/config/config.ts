@@ -24,7 +24,6 @@ interface ConfigType {
   IS_DEV: boolean
   IS_PRO: boolean
   IS_PRO_EXIST: boolean
-  KEY?: string
   NONCE: string
   PLUGIN_ADMIN_URL: string
   PLUGIN_SLUG: string
@@ -51,7 +50,6 @@ const config = {
   IS_DEV: import.meta.env.DEV,
   IS_PRO: SERVER_VARIABLES?.isSeoChangeMonitorPro === '1',
   IS_PRO_EXIST: getServerVariable('isSeoChangeMonitorProExist', '0') === '1',
-  KEY: getServerVariable('key'), // license key
   NONCE: getServerVariable('nonce', ''),
   PLUGIN_ADMIN_URL: getServerVariable('pluginAdminURL'),
   PLUGIN_SLUG: getServerVariable('pluginSlug', 'silent-seo-alerts'),
