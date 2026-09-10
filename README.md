@@ -170,20 +170,12 @@ bundling the same library cannot collide.
 
 **Extension points.** The plugin exposes filters and actions through
 `Config::withPrefix()` — `settings_defaults`, `settings_update_partial`,
-`settings_for_client`, `run_finished`, `settings_updated`, `ssl_verify`. The paid add-on
-registers against these rather than patching core files.
+`settings_for_client`, `run_finished`, `settings_updated`, `ssl_verify`. An add-on can
+register settings keys, validate them, strip its own secrets before they reach the
+browser, and act on a finished run without touching anything here.
 
 **Migrations.** `InstallerProvider::migration()` lists them in run order;
 `drop()` returns the same set, walked with `down()` instead of `up()`.
-
----
-
-## Silent SEO Alerts Pro
-
-A separate add-on adds webhooks, Slack notifications, AI-written explanations and weekly
-client reports. It ships no vendor tree of its own — it relies on the classes this plugin
-already autoloads, and hooks the filters listed above. The free plugin hides pro-only
-screens unless the add-on is active.
 
 ---
 
@@ -207,7 +199,7 @@ php wp-kit make:migration AppConnections     # also registers itself in Installe
 
 ## License
 
-GPL-2.0-or-later. See [LICENSE](LICENSE).
+GPL-2.0-or-later.
 
 The bundled Outfit typeface is licensed under the SIL Open Font License 1.1 — see
 [`frontend/public/fonts/LICENSE-Outfit.txt`](frontend/public/fonts/LICENSE-Outfit.txt).

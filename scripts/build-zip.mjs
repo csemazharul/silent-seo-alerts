@@ -22,7 +22,6 @@ const INCLUDE = [
   'assets',
   'languages',
   'readme.txt',
-  'LICENSE',
   'uninstall.php',
   'composer.json' // documents what vendor/ holds; staging needs it for composer install
 ]
@@ -164,7 +163,7 @@ try {
   }
 
   // Dependencies ship their own CI config and test suites; users need neither.
-  // LICENSE and README files are deliberately kept.
+  // README and licence files inside vendor packages are deliberately kept.
   const trimmed = trimVendorCruft(path.join(stage, 'vendor'))
   if (trimmed > 0) log(`  - trimmed ${trimmed} dev files from vendor/`)
 
