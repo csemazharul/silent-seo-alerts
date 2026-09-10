@@ -1,268 +1,213 @@
-# Silent SEO Alerts — WordPress Plugin Starter
+# Silent SEO Alerts
 
-A modern WordPress plugin starter with React frontend, PHP backend, and a CLI initializer.
+A WordPress plugin that watches your pages for SEO-affecting changes and tells you what
+broke, how bad it is, and what to do about it — in plain English.
 
-> ⚠️ This is a starter template. Run `php wp-kit plugin:init` before activating the plugin.
+Most SEO damage is silent. A plugin update flips a page to `noindex`, a theme change drops
+the canonical tag, an editor trims 800 words out of a post — and nothing tells you. You
+find out weeks later, when the traffic is already gone.
 
----
-
-## Features
-
-- **CLI Initializer** — interactive `php wp-kit plugin:init` replaces all placeholders in one command
-- **React Frontend** — Vite + React + TypeScript + Tailwind + Ant Design
-- **PHP Backend** — PSR-4 autoloaded, namespace-isolated vendor deps via Imposter
-- **REST & AJAX Routing** — built-in router with middleware support
-- **Database Migrations** — versioned schema via WPKit MigrationHelper
-- **Dev Hot Reload** — Vite HMR wired to WordPress via `.env`
-- **Code Quality** — ESLint, Prettier, PHPStan, PHPCS, Rector, Vitest, PHPUnit
+This repository is the source of record for the plugin published on WordPress.org. The
+compiled files under `assets/` are built from `frontend/src`; see
+[Building from source](#building-from-source).
 
 ---
 
-## Setup
+## What it watches
 
-### 1. Initialize the plugin
+**Per page** — `noindex`/`nofollow` appearing or disappearing, robots meta changes, titles
+and meta descriptions, canonical tags (changed, removed, or pointed off-site), JSON-LD
+schema types, Open Graph and Twitter tags, H1 changes, word-count drops, HTTP errors, and
+new or off-site redirects.
 
-```bash
-php wp-kit plugin:init
-```
+**Site-wide** — `robots.txt` changes (including a loud alert if it starts blocking
+everything), the rules it sets for AI crawlers, XML sitemap health, and WordPress's own
+"Discourage search engines" setting.
 
-You will be prompted for:
+**AI crawlers** — records when GPTBot, ClaudeBot, PerplexityBot, Google-Extended, CCBot
+and others actually visit, so you can notice when one goes quiet. No setup needed; it
+reads the user agent on incoming requests.
 
-```
-Enter the plugin name:
-Enter the plugin slug:
-Enter the plugin prefix [space, hyphen will be converted to _]:
-Enter the REST API namespace [space, hyphen will be converted to _]:
-Enter the app root namespace:
-```
+Findings are graded critical / warning / informational, and a single email digest goes out
+per run rather than one message per finding.
 
-After confirming, the CLI will:
-
-1. Replace all placeholders across the codebase
-2. Update `backend/app/Config.php` constants
-3. Create the main plugin PHP file (e.g. `your-slug.php`)
-4. Run `composer install` with a fresh Imposter namespace transform
-
-### 2. Configure .env
-
-```bash
-cp .env.example .env
-```
-
-Edit `.env` and set at minimum:
-
-```env
-PLUGIN_SLUG = your-plugin-slug
-DEV          = true
-DEV_URL      = http://localhost:3000/wp-content/plugins/your-plugin-slug/frontend
-```
-
-### 3. Start development
-
-Choose one path:
+Everything runs on the site itself. There is no account, no API key, and no third-party
+service — the plugin fetches only URLs on your own host, using the WordPress HTTP API.
 
 ---
 
-#### Option A — Docker (wp-env) `recommended`
+## Requirements
 
-Requires [Docker Desktop](https://www.docker.com/products/docker-desktop/) (Mac/Windows) or Docker Engine (Linux).
-
-```bash
-pnpm install
-pnpm env:start    # spins up WordPress + activates plugin automatically
-pnpm dev:free     # start Vite dev server with HMR
-```
-
-| Service | URL |
-|---------|-----|
-| WordPress | http://localhost:8888 |
-| WP Admin | http://localhost:8888/wp-admin `admin / password` |
-| phpMyAdmin | http://localhost:8889 |
-
-**wp-env commands:**
-
-```bash
-pnpm env:stop                  # stop containers
-pnpm env:shell                 # bash inside container
-pnpm env:wp -- plugin list     # run any WP-CLI command
-pnpm env:logs                  # tail logs
-pnpm env:clean                 # reset database
-pnpm env:destroy               # remove containers + volumes
-```
+| | |
+| --- | --- |
+| PHP | 8.2+ |
+| WordPress | 5.9+ |
+| Node | 20+ (only to build the frontend) |
+| pnpm | 9+ (only to build the frontend) |
 
 ---
 
-#### Option B — Existing WordPress install
+## Building from source
 
-Place this repo inside `wp-content/plugins/your-plugin-slug/`, then:
+The plugin ships pre-built — `assets/` already contains the compiled bundle, so no build
+step is needed just to run it. To reproduce those files:
+
+```bash
+pnpm install --frozen-lockfile
+pnpm build:free
+```
+
+That writes `assets/main-*.js`, `assets/main-*.css` and `assets/build-code-name.txt`.
+`frontend/public/` is copied into `assets/` verbatim, which is how the self-hosted Outfit
+web fonts reach `assets/fonts/`.
+
+> The Vite build sets `emptyOutDir`, so it wipes `assets/` first. Anything that must
+> survive a build belongs in `frontend/public/`, not `assets/`.
+
+To produce the distributable zip:
+
+```bash
+pnpm prod:free-zip     # -> dist/silent-seo-alerts-<version>.zip
+```
+
+`scripts/build-zip.mjs` copies an explicit allowlist, installs Composer dependencies
+without dev packages, strips dev files from `vendor/`, and then re-opens the finished zip
+to confirm nothing forbidden (`.env`, `.git`, `node_modules`) slipped in.
+
+---
+
+## Local development
+
+Place the repository in `wp-content/plugins/silent-seo-alerts/`, then:
 
 ```bash
 composer install
 pnpm install
-pnpm dev:free     # start Vite dev server with HMR
+cp .env.example .env
+pnpm dev:free          # Vite dev server with hot reload
 ```
 
-Go to **WordPress Admin → Plugins** and activate your plugin.
-
----
-
-## Development
-
-Start the Vite dev server for hot reload:
-
-```bash
-pnpm dev:free
-```
-
-Enable dev mode in `.env`:
+Set these in `.env` so WordPress loads assets from Vite instead of `assets/`:
 
 ```env
-DEV = true
-DEV_URL = http://localhost:3000/wp-content/plugins/your-plugin-slug/frontend
+DEV     = true
+DEV_URL = http://localhost:3000/wp-content/plugins/silent-seo-alerts/frontend
 ```
 
-Build for production:
+Activate the plugin in **Plugins**, then open **Silent SEO Alerts** in the admin sidebar.
+The first run records a baseline — nothing is reported until the run after that, because
+there is nothing to compare against yet.
+
+### Checks
 
 ```bash
-pnpm build:free
+pnpm lint                 # ESLint, autofixing
+pnpm exec tsc --noEmit    # TypeScript
+composer compat           # PHPCompatibility against PHP 8.2
+composer code:analyze     # PHPStan
+composer phpcs            # PSR-12 + project sniffs
 ```
+
+The release gate is the official
+[Plugin Check](https://wordpress.org/plugins/plugin-check/) plugin, run against the built
+zip rather than the working tree — it is what WordPress.org reviewers use:
+
+```bash
+wp plugin check silent-seo-alerts
+```
+
+> Known rough edges: `composer lint` (and `pnpm lint:php`, which calls it) references a
+> `.php-cs-fixer.php` config that is not in the repository, so it exits before running.
+> `pnpm test` finds no test files — the Vitest setup exists but nothing uses it yet.
+> `composer phpcs` currently reports a backlog of style violations; it is not yet a
+> passing gate.
 
 ---
 
-## CLI Commands
-
-```bash
-# Plugin
-php wp-kit plugin:init                       # interactive plugin initializer
-php wp-kit plugin:info                       # show current plugin name, slug, namespace
-
-# Generators (run after plugin:init)
-php wp-kit make:controller ExampleController # backend/app/HTTP/Controllers/<Name>.php
-php wp-kit make:model Tag                    # backend/app/Models/<Name>.php
-php wp-kit make:migration AppConnections     # backend/db/Migrations/<NS><Name>TableMigration.php
-
-php wp-kit --help                            # list all commands
-```
-
-Generators are **strict positional** — name is required and must be PascalCase. The
-generator refuses to overwrite an existing file. `make:migration` also auto-registers
-the new class in `InstallerProvider::migration()` and `drop()`.
-
----
-
-## Project Structure
+## Project structure
 
 ```
+├── silent-seo-alerts.php        # plugin header, loads backend/bootstrap.php
+├── uninstall.php                # drops tables, options, transients, cron on delete
 ├── backend/
 │   ├── app/
-│   │   ├── Config.php              # plugin constants & config helpers
-│   │   ├── Plugin.php              # plugin bootstrap
-│   │   ├── Dotenv.php              # .env loader
+│   │   ├── Config.php           # slug, version, prefixes, path helpers
+│   │   ├── Plugin.php           # boots providers per request type
 │   │   ├── HTTP/
-│   │   │   ├── Controllers/        # generated via `wp-kit make:controller`
-│   │   │   └── Middleware/         # nonce & admin checkers
-│   │   ├── Models/                 # generated via `wp-kit make:model`
-│   │   ├── Providers/              # HookProvider, InstallerProvider
-│   │   ├── Views/                  # Layout, Head, Body, HtmlTagModifier
-│   │   └── src/Menu.php            # sidebar menu definition
-│   ├── db/Migrations/              # generated via `wp-kit make:migration`
-│   ├── hooks/
-│   │   ├── api.php                 # REST API routes
-│   │   └── ajax.php                # AJAX routes
-│   └── bootstrap.php               # autoload + plugin boot
-├── frontend/
-│   └── src/
-│       ├── main.tsx                # React entry point
-│       ├── Welcome.tsx             # default welcome page
-│       ├── config/config.ts        # server variable bindings
-│       ├── common/helpers/         # i18n, request, tryCatch
-│       └── resource/               # CSS, images
-├── wp-kit                          # PHP CLI tool
-├── silent-seo-alerts.php              # WordPress plugin header
-└── composer.json
+│   │   │   ├── Controllers/     # AJAX + REST endpoints
+│   │   │   └── Middleware/      # nonce + manage_options checks
+│   │   ├── Models/              # Target, Finding, CheckRun, Snapshot, ...
+│   │   ├── Providers/           # cron, hooks, installer, bot tracking
+│   │   ├── Services/
+│   │   │   ├── CheckEngine/     # fetch, extract, diff, classify severity
+│   │   │   ├── Findings/        # plain-English explanations per change type
+│   │   │   ├── Alerts/          # email digest
+│   │   │   └── Maintenance/     # retention pruning
+│   │   └── Views/               # admin shell, enqueues, email templates
+│   ├── db/Migrations/           # one class per table
+│   └── hooks/{ajax,api}.php     # route definitions
+├── frontend/src/
+│   ├── features/                # dashboard, targets, flightLog, siteWide, settings
+│   ├── api/                     # React Query hooks + request layer
+│   └── config/                  # server variables handed over by wp_localize_script
+├── assets/                      # built output — do not edit by hand
+└── scripts/build-zip.mjs        # release packaging
 ```
 
 ---
 
-## Adding REST Routes
+## Architecture notes
 
-Define routes in `backend/hooks/api.php`:
+**Storage prefix.** Tables and options use `SEO_CHANGE_MONITOR_`, and the PHP namespace is
+`SEOChangeMonitor\`. The plugin was renamed to Silent SEO Alerts after those were set; they
+were deliberately left alone, because changing the namespace would mean regenerating the
+whole Imposter-prefixed `vendor/` tree, and changing the storage prefix would orphan
+existing installs' data. Only the public identity — name, slug, text domain — was renamed.
 
-```php
-use SEOChangeMonitor\Deps\BitApps\WPKit\Http\Router\Router;
+**Vendor isolation.** Composer dependencies are namespaced under `SEOChangeMonitor\Deps\`
+by [Imposter](https://github.com/TypistTech/imposter-plugin), so a different plugin
+bundling the same library cannot collide.
 
-$router->get('/hello', function () {
-    return ['message' => 'Hello from Silent SEO Alerts'];
-});
+**Extension points.** The plugin exposes filters and actions through
+`Config::withPrefix()` — `settings_defaults`, `settings_update_partial`,
+`settings_for_client`, `run_finished`, `settings_updated`, `ssl_verify`. The paid add-on
+registers against these rather than patching core files.
 
-$router->post('/data', [\YourNamespace\Controllers\DataController::class, 'store'])
-       ->middleware('nonce', 'isAdmin');
-```
-
----
-
-## Adding AJAX Routes
-
-Define routes in `backend/hooks/ajax.php`:
-
-```php
-$router->post('get_settings', [\YourNamespace\Controllers\SettingsController::class, 'index']);
-```
+**Migrations.** `InstallerProvider::migration()` lists them in run order;
+`drop()` returns the same set, walked with `down()` instead of `up()`.
 
 ---
 
-## Database Migrations
+## Silent SEO Alerts Pro
 
-Generate a migration with the CLI — it scaffolds the file **and** registers it in
-`InstallerProvider::migration()` + `drop()` automatically:
+A separate add-on adds webhooks, Slack notifications, AI-written explanations and weekly
+client reports. It ships no vendor tree of its own — it relies on the classes this plugin
+already autoloads, and hooks the filters listed above. The free plugin hides pro-only
+screens unless the add-on is active.
+
+---
+
+## Contributing
+
+Match the surrounding style; the linters above are the arbiter. Keep refactoring commits
+separate from behaviour changes.
+
+The generators are still available for scaffolding:
 
 ```bash
-php wp-kit make:migration AppConnections
+php wp-kit make:controller ExampleController
+php wp-kit make:model Tag
+php wp-kit make:migration AppConnections     # also registers itself in InstallerProvider
 ```
 
-This produces `backend/db/Migrations/<Namespace>AppConnectionsTableMigration.php`
-with a snake_case table name (`app_connections`) and the standard up/down skeleton:
-
-```php
-final class SEOChangeMonitorAppConnectionsTableMigration extends Migration
-{
-    public function up(): void
-    {
-        Schema::withPrefix(Connection::wpPrefix() . Config::VAR_PREFIX)->create(
-            'app_connections',
-            function (Blueprint $table): void {
-                $table->id();
-                // add columns
-                $table->timestamps();
-            }
-        );
-    }
-
-    public function down(): void
-    {
-        Schema::withPrefix(Connection::wpPrefix() . Config::VAR_PREFIX)->drop('app_connections');
-    }
-}
-```
-
-Migration files use **no namespace** (matches WPKit's MigrationHelper convention) and
-the class name format is `{RootNamespace}{Name}TableMigration`. The class is appended
-to both arrays in [`InstallerProvider`](backend/app/Providers/InstallerProvider.php) so
-the migration runs on activation and rolls back on uninstall.
-
----
-
-## Tech Stack
-
-| Layer    | Tools                                                                    |
-| -------- | ------------------------------------------------------------------------ |
-| Frontend | React 18, TypeScript, Vite, Tailwind CSS, Ant Design, Jotai, React Query |
-| Backend  | PHP 7.4+, WPKit, Imposter (namespace isolation)                          |
-| Testing  | Vitest, PHPUnit, Playwright                                              |
-| Quality  | ESLint, Prettier, PHPStan, PHPCS, Rector                                 |
+> Do not run `php wp-kit plugin:init`. It is the one-time initializer from the starter
+> template this project began as, and running it now would rewrite the plugin's identity.
 
 ---
 
 ## License
 
-GPL-2.0-or-later
+GPL-2.0-or-later. See [LICENSE](LICENSE).
+
+The bundled Outfit typeface is licensed under the SIL Open Font License 1.1 — see
+[`frontend/public/fonts/LICENSE-Outfit.txt`](frontend/public/fonts/LICENSE-Outfit.txt).
