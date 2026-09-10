@@ -1,0 +1,39 @@
+Building the compiled assets
+============================
+
+`assets/main-*.js` and `assets/main-*.css` are built from the TypeScript and
+React source in `frontend/src`. The published plugin carries only the compiled
+output; this repository is where the readable source lives, so the two can be
+checked against each other.
+
+Requirements
+------------
+
+- Node.js 20 or newer
+- pnpm 9 or newer (`npm install -g pnpm`)
+
+Steps
+-----
+
+```sh
+pnpm install --frozen-lockfile
+pnpm build:free
+```
+
+The build writes to `assets/`, replacing the bundle, the stylesheet and
+`build-code-name.txt`. `frontend/public/` is copied there verbatim, which is how
+the self-hosted Outfit font files reach `assets/fonts/`.
+
+Layout
+------
+
+| Path                | What it is                                            |
+| ------------------- | ----------------------------------------------------- |
+| `frontend/src`      | Application source: React components, hooks, styles   |
+| `frontend/public`   | Files copied into `assets/` untouched (the web fonts) |
+| `vite.config.ts`    | Build configuration, including the output filenames   |
+| `tsconfig*.json`    | TypeScript configuration                              |
+| `package.json`      | Dependencies and the build scripts                    |
+| `pnpm-lock.yaml`    | Exact dependency versions used for the shipped build  |
+
+No build step is needed to *run* the plugin: `assets/` is already built.
