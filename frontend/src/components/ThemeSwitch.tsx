@@ -22,7 +22,7 @@ const MODE_ICON: Record<ThemeMode, ReactNode> = {
  * Label plus the dot that marks an option as on, as in antd's own switcher.
  *
  * The colour comes from the antd token rather than the CSS-variable map: the
- * menu is portalled to <body>, outside #seo-change-monitor-root, where every
+ * menu is portalled to <body>, outside #silent-seo-alerts-root, where every
  * --scm-* variable is undefined and the dot would render transparent.
  */
 function Row({ label, on }: { label: string; on: boolean }) {

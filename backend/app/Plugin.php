@@ -2,10 +2,11 @@
 
 namespace SEOChangeMonitor;
 
-// Prevent direct script access
-if (!\defined('ABSPATH')) {
+if (!defined('ABSPATH')) {
     exit;
 }
+
+// Prevent direct script access
 
 use SEOChangeMonitor\Deps\BitApps\WPKit\Hooks\Hooks;
 use SEOChangeMonitor\Deps\BitApps\WPKit\Http\RequestType;

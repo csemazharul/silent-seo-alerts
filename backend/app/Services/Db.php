@@ -2,7 +2,7 @@
 
 namespace SEOChangeMonitor\Services;
 
-if (!\defined('ABSPATH')) {
+if (!defined('ABSPATH')) {
     exit;
 }
 
@@ -60,25 +60,31 @@ class Db
         $bindings = [];
         foreach ($data as $column => $value) {
             if ($value === null) {
-                $sets[] = "`{$column}` = NULL";
+                $sets[] = self::column($column) . ' = NULL';
 
                 continue;
             }
 
-            $sets[]     = "`{$column}` = " . self::placeholder($value);
+            $sets[]     = self::column($column) . ' = ' . self::placeholder($value);
             $bindings[] = $value;
         }
 
         $conditions = [];
         foreach ($where as $column => $value) {
-            $conditions[] = "`{$column}` = " . self::placeholder($value);
+            $conditions[] = self::column($column) . ' = ' . self::placeholder($value);
             $bindings[]   = $value;
         }
 
         $sql = 'UPDATE `' . self::table($table) . '` SET ' . implode(', ', $sets)
              . ' WHERE ' . implode(' AND ', $conditions);
 
-        // A non-empty $where always contributes at least one binding.
+        /*
+         * Every value is bound; the only interpolated parts are the table
+         * name, which self::table() builds, and the column names, which
+         * self::column() rejects unless they are plain identifiers. A
+         * non-empty $where always contributes at least one binding.
+         */
+        // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, PluginCheck.Security.DirectDB.UnescapedDBParameter
         return $wpdb->query($wpdb->prepare($sql, $bindings));
     }
 
@@ -86,7 +92,22 @@ class Db
     {
         global $wpdb;
 
+        // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, PluginCheck.Security.DirectDB.UnescapedDBParameter -- callers pass a literal statement and bind every value.
         return $wpdb->query($bindings === [] ? $sql : $wpdb->prepare($sql, $bindings));
+    }
+
+    /**
+     * Backticks a column name, refusing anything that is not a plain
+     * identifier. Column names cannot be bound as parameters, so this is
+     * what keeps them out of the SQL if a caller ever passes one through.
+     */
+    private static function column($name)
+    {
+        if (!preg_match('/^[A-Za-z0-9_]+$/', (string) $name)) {
+            throw new \InvalidArgumentException('Invalid column name.');
+        }
+
+        return "`{$name}`";
     }
 
     private static function placeholder($value)

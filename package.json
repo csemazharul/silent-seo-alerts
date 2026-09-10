@@ -43,7 +43,7 @@
     "update-ver": "node scripts/update-version.js",
     "package": "node scripts/build-zip.mjs",
     "prod:free-zip": "pnpm build:free && node scripts/build-zip.mjs",
-    "i18n": "wp i18n make-pot . languages/seo-change-monitor.pot --slug=seo-change-monitor --exclude=frontend,node_modules,vendor,tests,assets,dist,scripts"
+    "i18n": "wp i18n make-pot . languages/silent-seo-alerts.pot --slug=silent-seo-alerts --exclude=frontend,node_modules,vendor,tests,assets,dist,scripts"
   },
   "dependencies": {
     "@ant-design/cssinjs": "^1.23.0",

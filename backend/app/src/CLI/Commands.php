@@ -2,7 +2,7 @@
 
 namespace SEOChangeMonitor\src\CLI;
 
-if (!\defined('ABSPATH')) {
+if (!defined('ABSPATH')) {
     exit;
 }
 

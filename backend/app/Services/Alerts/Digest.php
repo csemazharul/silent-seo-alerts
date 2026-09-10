@@ -2,7 +2,7 @@
 
 namespace SEOChangeMonitor\Services\Alerts;
 
-if (!\defined('ABSPATH')) {
+if (!defined('ABSPATH')) {
     exit;
 }
 

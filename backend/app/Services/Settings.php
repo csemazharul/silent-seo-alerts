@@ -2,7 +2,7 @@
 
 namespace SEOChangeMonitor\Services;
 
-if (!\defined('ABSPATH')) {
+if (!defined('ABSPATH')) {
     exit;
 }
 
@@ -14,61 +14,21 @@ class Settings
 
     public const THRESHOLDS = ['critical', 'warning', 'info'];
 
+    /**
+     * Every key the plugin stores. Add-ons register their own through the
+     * filter, which is also what makes them persistable: update() only saves
+     * keys that appear here.
+     */
     public static function defaults()
     {
-        return [
+        return apply_filters(Config::withPrefix('settings_defaults'), [
             'frequency'         => 'daily',
             'email_enabled'     => true,
             'email_threshold'   => 'warning',
             'email_recipient'   => '',
             'retention_days'    => 0, // 0 = keep forever; open criticals are never trimmed
             'bot_tracking'      => true,
-            'webhook_enabled'   => false,
-            'webhook_urls'      => [],
-            'webhook_threshold' => 'critical',
-            'webhook_secret'    => '',
-
-            // AI explanations: off, and invisible until a key is entered.
-            'ai_enabled'        => false,
-            'ai_provider'       => 'anthropic',
-            'ai_api_key'        => '',
-            'ai_model'          => '',
-            'ai_monthly_cap'    => 5.0, // USD; 0 = no cap
-
-            'slack_enabled'     => false,
-            'slack_webhook_url' => '',
-            'slack_threshold'   => 'critical',
-
-            'report_enabled'      => false,
-            'report_recipients'   => '',
-            'report_brand_name'   => '',
-            'report_brand_color'  => '#3b5bdb',
-            'report_logo_url'     => '',
-            'report_footer'       => '',
-        ];
-    }
-
-    public const AI_PROVIDERS = ['anthropic', 'openai'];
-
-    /**
-     * Webhook endpoints, filtered down to well-formed URLs.
-     *
-     * @return string[]
-     */
-    public static function webhookUrls()
-    {
-        $urls = self::get('webhook_urls');
-
-        if (!\is_array($urls)) {
-            return [];
-        }
-
-        return array_values(
-            array_filter(
-                array_map(trim(...), $urls),
-                static fn ($url) => $url !== '' && filter_var($url, FILTER_VALIDATE_URL) !== false
-            )
-        );
+        ]);
     }
 
     public static function all()

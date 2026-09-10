@@ -14,6 +14,10 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
+// AlertMailer::body() includes this file inside a method, so everything
+// below is method-local. The sniff reads it as a top-level script.
+// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
+
 $severityColours = [
     'critical' => '#b32d2e',
     'warning'  => '#bd8600',
@@ -24,13 +28,13 @@ $severityColours = [
 
     <?php if ($impaired) : ?>
         <div style="border-left:4px solid #bd8600;background:#fcf9e8;padding:12px 16px;margin-bottom:20px;">
-            <strong><?php esc_html_e('Monitoring is impaired', 'seo-change-monitor'); ?></strong><br>
+            <strong><?php esc_html_e('Monitoring is impaired', 'silent-seo-alerts'); ?></strong><br>
             <?php echo esc_html($impaired['reason']); ?><br>
             <span style="color:#646970;font-size:13px;">
                 <?php
                 printf(
                     /* translators: %s: date */
-                    esc_html__('Since %s. Until this is fixed, no all-clear can be trusted.', 'seo-change-monitor'),
+                    esc_html__('Since %s. Until this is fixed, no all-clear can be trusted.', 'silent-seo-alerts'),
                     esc_html($impaired['since'])
                 );
                 ?>
@@ -39,7 +43,7 @@ $severityColours = [
     <?php endif; ?>
 
     <?php if (!empty($findings)) : ?>
-        <p><?php esc_html_e('These changes were detected on your site:', 'seo-change-monitor'); ?></p>
+        <p><?php esc_html_e('These changes were detected on your site:', 'silent-seo-alerts'); ?></p>
 
         <?php foreach ($findings as $finding) : ?>
             <?php
@@ -55,29 +59,29 @@ $severityColours = [
                     <?php echo esc_html($finding->severity); ?>
                 </div>
                 <div style="font-weight:600;margin:2px 0 6px;">
-                    <?php echo esc_html($label ?: __('Site-wide', 'seo-change-monitor')); ?>
+                    <?php echo esc_html($label ?: __('Site-wide', 'silent-seo-alerts')); ?>
                 </div>
 
                 <?php if ($explanation) : ?>
                     <p style="margin:0 0 8px;"><?php echo esc_html($explanation['what']); ?></p>
-                    <p style="margin:0 0 8px;color:#50575e;"><strong><?php esc_html_e('Why it matters:', 'seo-change-monitor'); ?></strong> <?php echo esc_html($explanation['why']); ?></p>
-                    <p style="margin:0 0 8px;color:#50575e;"><strong><?php esc_html_e('What to check:', 'seo-change-monitor'); ?></strong> <?php echo esc_html($explanation['check']); ?></p>
+                    <p style="margin:0 0 8px;color:#50575e;"><strong><?php esc_html_e('Why it matters:', 'silent-seo-alerts'); ?></strong> <?php echo esc_html($explanation['why']); ?></p>
+                    <p style="margin:0 0 8px;color:#50575e;"><strong><?php esc_html_e('What to check:', 'silent-seo-alerts'); ?></strong> <?php echo esc_html($explanation['check']); ?></p>
                 <?php endif; ?>
 
                 <table style="font-size:13px;border-collapse:collapse;margin-top:6px;">
                     <tr>
-                        <td style="color:#646970;padding:2px 12px 2px 0;vertical-align:top;"><?php esc_html_e('Before', 'seo-change-monitor'); ?></td>
+                        <td style="color:#646970;padding:2px 12px 2px 0;vertical-align:top;"><?php esc_html_e('Before', 'silent-seo-alerts'); ?></td>
                         <td style="word-break:break-all;"><?php echo esc_html(is_scalar($before['value'] ?? null) ? (string) $before['value'] : wp_json_encode($before['value'] ?? null)); ?></td>
                     </tr>
                     <tr>
-                        <td style="color:#646970;padding:2px 12px 2px 0;vertical-align:top;"><?php esc_html_e('After', 'seo-change-monitor'); ?></td>
+                        <td style="color:#646970;padding:2px 12px 2px 0;vertical-align:top;"><?php esc_html_e('After', 'silent-seo-alerts'); ?></td>
                         <td style="word-break:break-all;"><?php echo esc_html(is_scalar($after['value'] ?? null) ? (string) $after['value'] : wp_json_encode($after['value'] ?? null)); ?></td>
                     </tr>
                 </table>
 
                 <?php if (!empty($events)) : ?>
                     <p style="margin:10px 0 0;font-size:13px;color:#646970;">
-                        <?php esc_html_e('Site events shortly before this change (they may be related, but we cannot be certain):', 'seo-change-monitor'); ?><br>
+                        <?php esc_html_e('Site events shortly before this change (they may be related, but we cannot be certain):', 'silent-seo-alerts'); ?><br>
                         <?php foreach ($events as $event) : ?>
                             • <?php echo esc_html(str_replace('_', ' ', $event['type'])); ?>
                             <strong><?php echo esc_html($event['subject']); ?></strong>
@@ -91,13 +95,13 @@ $severityColours = [
 
     <?php if (!empty($resolved)) : ?>
         <div style="border:1px solid #dcdcde;border-left:4px solid #008a20;padding:14px 16px;margin-bottom:16px;">
-            <div style="font-weight:600;margin-bottom:6px;"><?php esc_html_e('All clear', 'seo-change-monitor'); ?></div>
-            <p style="margin:0 0 8px;"><?php esc_html_e('These critical problems are no longer present:', 'seo-change-monitor'); ?></p>
+            <div style="font-weight:600;margin-bottom:6px;"><?php esc_html_e('All clear', 'silent-seo-alerts'); ?></div>
+            <p style="margin:0 0 8px;"><?php esc_html_e('These critical problems are no longer present:', 'silent-seo-alerts'); ?></p>
             <ul style="margin:0;padding-left:18px;">
                 <?php foreach ($resolved as $finding) : ?>
                     <li>
                         <?php
-                        $label       = $pageLabels[$finding->target_id] ?? __('Site-wide', 'seo-change-monitor');
+                        $label       = $pageLabels[$finding->target_id] ?? __('Site-wide', 'silent-seo-alerts');
                         $explanation = $explanations[$finding->id] ?? null;
                         echo esc_html($label);
                         if ($explanation) {
@@ -111,8 +115,8 @@ $severityColours = [
     <?php endif; ?>
 
     <p style="font-size:13px;color:#646970;">
-        <a href="<?php echo esc_url($adminUrl); ?>" style="color:#2271b1;"><?php esc_html_e('Open the flight log', 'seo-change-monitor'); ?></a>
+        <a href="<?php echo esc_url($adminUrl); ?>" style="color:#2271b1;"><?php esc_html_e('Open the flight log', 'silent-seo-alerts'); ?></a>
         &nbsp;·&nbsp;
-        <?php esc_html_e('Sent by SEO Change Monitor. Change your alert settings in the plugin.', 'seo-change-monitor'); ?>
+        <?php esc_html_e('Sent by Silent SEO Alerts. Change your alert settings in the plugin.', 'silent-seo-alerts'); ?>
     </p>
 </div>

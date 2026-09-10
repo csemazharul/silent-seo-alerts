@@ -1,14 +1,13 @@
 <?php
 
 use SEOChangeMonitor\Deps\BitApps\WPKit\Http\Router\Route;
-use SEOChangeMonitor\HTTP\Controllers\AiController;
 use SEOChangeMonitor\HTTP\Controllers\CheckController;
 use SEOChangeMonitor\HTTP\Controllers\FindingController;
 use SEOChangeMonitor\HTTP\Controllers\SettingsController;
 use SEOChangeMonitor\HTTP\Controllers\StatusController;
 use SEOChangeMonitor\HTTP\Controllers\TargetController;
 
-if (! defined('ABSPATH')) {
+if (!defined('ABSPATH')) {
     exit;
 }
 
@@ -31,13 +30,6 @@ Route::group(
 
         Route::post('settings/get', [SettingsController::class, 'get']);
         Route::post('settings/update', [SettingsController::class, 'update']);
-        Route::post('settings/test-webhook', [SettingsController::class, 'testWebhook']);
-        Route::post('settings/test-slack', [SettingsController::class, 'testSlack']);
-        Route::post('report/preview', [SettingsController::class, 'previewReport']);
-        Route::post('report/send', [SettingsController::class, 'sendReport']);
-
-        Route::post('ai/explain', [AiController::class, 'explain']);
-        Route::post('ai/usage', [AiController::class, 'usage']);
 
         Route::post('dashboard/summary', [StatusController::class, 'dashboard']);
         Route::post('status/site', [StatusController::class, 'site']);

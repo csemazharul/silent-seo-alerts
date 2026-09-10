@@ -2,7 +2,7 @@
 
 namespace SEOChangeMonitor\src;
 
-if (!\defined('ABSPATH')) {
+if (!defined('ABSPATH')) {
     exit;
 }
 
@@ -25,12 +25,12 @@ class SiteHealth
     public function registerTests($tests)
     {
         $tests['direct']['seo_change_monitor_operational'] = [
-            'label' => __('SEO change monitoring is working', 'seo-change-monitor'),
+            'label' => __('SEO change monitoring is working', 'silent-seo-alerts'),
             'test'  => [$this, 'testOperational'],
         ];
 
         $tests['direct']['seo_change_monitor_criticals'] = [
-            'label' => __('SEO critical findings', 'seo-change-monitor'),
+            'label' => __('SEO critical findings', 'silent-seo-alerts'),
             'test'  => [$this, 'testCriticals'],
         ];
 
@@ -40,10 +40,10 @@ class SiteHealth
     public function testOperational()
     {
         $result = [
-            'label'       => __('SEO Change Monitor is watching your pages', 'seo-change-monitor'),
+            'label'       => __('Silent SEO Alerts is watching your pages', 'silent-seo-alerts'),
             'status'      => 'good',
-            'badge'       => ['label' => __('SEO', 'seo-change-monitor'), 'color' => 'blue'],
-            'description' => '<p>' . esc_html__('Checks are running on schedule and the site can fetch its own pages.', 'seo-change-monitor') . '</p>',
+            'badge'       => ['label' => __('SEO', 'silent-seo-alerts'), 'color' => 'blue'],
+            'description' => '<p>' . esc_html__('Checks are running on schedule and the site can fetch its own pages.', 'silent-seo-alerts') . '</p>',
             'actions'     => '',
             'test'        => 'seo_change_monitor_operational',
         ];
@@ -52,11 +52,11 @@ class SiteHealth
             $details = ImpairedState::details();
 
             $result['status']      = 'critical';
-            $result['label']       = __('SEO change monitoring is impaired', 'seo-change-monitor');
+            $result['label']       = __('SEO change monitoring is impaired', 'silent-seo-alerts');
             $result['description'] = '<p>' . esc_html(
                 sprintf(
                     /* translators: 1: reason, 2: date */
-                    __('%1$s (since %2$s). Until this is fixed, changes to your pages may go unnoticed.', 'seo-change-monitor'),
+                    __('%1$s (since %2$s). Until this is fixed, changes to your pages may go unnoticed.', 'silent-seo-alerts'),
                     $details['reason'],
                     $details['since']
                 )
@@ -68,10 +68,10 @@ class SiteHealth
         $overdue = $this->overdueRun();
         if ($overdue) {
             $result['status']      = 'recommended';
-            $result['label']       = __('SEO checks are overdue', 'seo-change-monitor');
+            $result['label']       = __('SEO checks are overdue', 'silent-seo-alerts');
             $result['description'] = '<p>' . esc_html__(
                 'The last scheduled check ran longer ago than expected. WP-Cron may not be firing on this site; a real system cron job is more reliable.',
-                'seo-change-monitor'
+                'silent-seo-alerts'
             ) . '</p>';
         }
 
@@ -85,10 +85,10 @@ class SiteHealth
             ->count();
 
         $result = [
-            'label'       => __('No critical SEO changes are outstanding', 'seo-change-monitor'),
+            'label'       => __('No critical SEO changes are outstanding', 'silent-seo-alerts'),
             'status'      => 'good',
-            'badge'       => ['label' => __('SEO', 'seo-change-monitor'), 'color' => 'blue'],
-            'description' => '<p>' . esc_html__('Nothing critical has changed on your monitored pages.', 'seo-change-monitor') . '</p>',
+            'badge'       => ['label' => __('SEO', 'silent-seo-alerts'), 'color' => 'blue'],
+            'description' => '<p>' . esc_html__('Nothing critical has changed on your monitored pages.', 'silent-seo-alerts') . '</p>',
             'actions'     => '',
             'test'        => 'seo_change_monitor_criticals',
         ];
@@ -101,18 +101,18 @@ class SiteHealth
                     '%d critical SEO change needs your attention',
                     '%d critical SEO changes need your attention',
                     $count,
-                    'seo-change-monitor'
+                    'silent-seo-alerts'
                 ),
                 $count
             );
             $result['description'] = '<p>' . esc_html__(
                 'Something that affects whether your pages can be found in search has changed.',
-                'seo-change-monitor'
+                'silent-seo-alerts'
             ) . '</p>';
             $result['actions'] = sprintf(
                 '<p><a href="%s">%s</a></p>',
                 esc_url(admin_url('admin.php?page=' . Config::SLUG . '#/log')),
-                esc_html__('Open the flight log', 'seo-change-monitor')
+                esc_html__('Open the flight log', 'silent-seo-alerts')
             );
         }
 

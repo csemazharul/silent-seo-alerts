@@ -1,4 +1,4 @@
-# SEO Change Monitor — WordPress Plugin Starter
+# Silent SEO Alerts — WordPress Plugin Starter
 
 A modern WordPress plugin starter with React frontend, PHP backend, and a CLI initializer.
 
@@ -178,7 +178,7 @@ the new class in `InstallerProvider::migration()` and `drop()`.
 │       ├── common/helpers/         # i18n, request, tryCatch
 │       └── resource/               # CSS, images
 ├── wp-kit                          # PHP CLI tool
-├── seo-change-monitor.php              # WordPress plugin header
+├── silent-seo-alerts.php              # WordPress plugin header
 └── composer.json
 ```
 
@@ -192,7 +192,7 @@ Define routes in `backend/hooks/api.php`:
 use SEOChangeMonitor\Deps\BitApps\WPKit\Http\Router\Router;
 
 $router->get('/hello', function () {
-    return ['message' => 'Hello from SEO Change Monitor'];
+    return ['message' => 'Hello from Silent SEO Alerts'];
 });
 
 $router->post('/data', [\YourNamespace\Controllers\DataController::class, 'store'])

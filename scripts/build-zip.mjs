@@ -23,11 +23,12 @@ const INCLUDE = [
   'languages',
   'readme.txt',
   'LICENSE',
-  'uninstall.php'
+  'uninstall.php',
+  'composer.json' // documents what vendor/ holds; staging needs it for composer install
 ]
 
 /** Needed to install vendor/ inside the staging copy, removed before zipping. */
-const BUILD_ONLY = ['composer.json', 'composer.lock']
+const BUILD_ONLY = ['composer.lock']
 
 /** Never ship these, even if an allowlisted folder contains them. */
 const FORBIDDEN = ['.env', '.git', 'node_modules', '.DS_Store']

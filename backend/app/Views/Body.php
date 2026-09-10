@@ -2,7 +2,7 @@
 
 namespace SEOChangeMonitor\Views;
 
-if (!\defined('ABSPATH')) {
+if (!defined('ABSPATH')) {
     exit;
 }
 
@@ -12,6 +12,6 @@ class Body
 {
     public function render()
     {
-        echo '<div id="seo-change-monitor-root"></div>';
+        echo '<div id="silent-seo-alerts-root"></div>';
     }
 }

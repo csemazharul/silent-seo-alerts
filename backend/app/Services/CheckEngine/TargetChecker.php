@@ -2,7 +2,7 @@
 
 namespace SEOChangeMonitor\Services\CheckEngine;
 
-if (!\defined('ABSPATH')) {
+if (!defined('ABSPATH')) {
     exit;
 }
 

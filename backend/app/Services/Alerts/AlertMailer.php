@@ -2,7 +2,7 @@
 
 namespace SEOChangeMonitor\Services\Alerts;
 
-if (!\defined('ABSPATH')) {
+if (!defined('ABSPATH')) {
     exit;
 }
 
@@ -47,7 +47,7 @@ class AlertMailer
         $sent = wp_mail(
             Settings::emailRecipient(),
             $this->subject($findings, $resolved, $impaired),
-            $this->body($findings, $resolved),
+            $this->body($findings, $resolved, $impaired),
             ['Content-Type: text/html; charset=UTF-8']
         );
 
@@ -58,20 +58,19 @@ class AlertMailer
         return $sent;
     }
 
-
     private function subject($findings, $resolved, $impaired)
     {
         $siteName = get_bloginfo('name');
         $critical = \count(array_filter($findings, static fn ($f) => $f->severity === Finding::SEVERITY_CRITICAL));
 
         if ($critical > 0) {
-            /* translators: 1: site name, 2: number of critical changes */
             return sprintf(
+                /* translators: 1: site name, 2: number of critical changes */
                 _n(
-                    '[%1$s] SEO Monitor: %2$d critical change detected',
-                    '[%1$s] SEO Monitor: %2$d critical changes detected',
+                    '[%1$s] Silent SEO Alerts: %2$d critical change detected',
+                    '[%1$s] Silent SEO Alerts: %2$d critical changes detected',
                     $critical,
-                    'seo-change-monitor'
+                    'silent-seo-alerts'
                 ),
                 $siteName,
                 $critical
@@ -80,21 +79,21 @@ class AlertMailer
 
         if ($findings === [] && $resolved !== []) {
             /* translators: %s: site name */
-            return sprintf(__('[%s] SEO Monitor: all clear', 'seo-change-monitor'), $siteName);
+            return sprintf(__('[%s] Silent SEO Alerts: all clear', 'silent-seo-alerts'), $siteName);
         }
 
         if ($impaired) {
             /* translators: %s: site name */
-            return sprintf(__('[%s] SEO Monitor: monitoring impaired', 'seo-change-monitor'), $siteName);
+            return sprintf(__('[%s] Silent SEO Alerts: monitoring impaired', 'silent-seo-alerts'), $siteName);
         }
 
-        /* translators: 1: site name, 2: number of changes */
         return sprintf(
+            /* translators: 1: site name, 2: number of changes */
             _n(
-                '[%1$s] SEO Monitor: %2$d change detected',
-                '[%1$s] SEO Monitor: %2$d changes detected',
+                '[%1$s] Silent SEO Alerts: %2$d change detected',
+                '[%1$s] Silent SEO Alerts: %2$d changes detected',
                 \count($findings),
-                'seo-change-monitor'
+                'silent-seo-alerts'
             ),
             $siteName,
             \count($findings)
@@ -105,7 +104,7 @@ class AlertMailer
      * Renders the digest view. $findings, $resolved and $impaired are in scope
      * for the template, along with $explanations keyed by finding id.
      */
-    private function body($findings, $resolved)
+    private function body($findings, $resolved, $impaired)
     {
         $explanations = [];
         foreach (array_merge($findings, $resolved) as $finding) {

@@ -2,7 +2,7 @@
 
 namespace SEOChangeMonitor\src;
 
-if (!\defined('ABSPATH')) {
+if (!defined('ABSPATH')) {
     exit;
 }
 
@@ -31,7 +31,7 @@ class DashboardWidget
 
         wp_add_dashboard_widget(
             'seo_change_monitor_summary',
-            __('SEO Change Monitor', 'seo-change-monitor'),
+            __('Silent SEO Alerts', 'silent-seo-alerts'),
             [$this, 'render']
         );
     }
@@ -52,7 +52,7 @@ class DashboardWidget
         if ($impaired) {
             printf(
                 '<p style="padding:8px 12px;border-left:4px solid #bd8600;background:#fcf9e8;"><strong>%s</strong><br>%s</p>',
-                esc_html__('Monitoring impaired', 'seo-change-monitor'),
+                esc_html__('Monitoring impaired', 'silent-seo-alerts'),
                 esc_html($impaired['reason'])
             );
         }
@@ -62,17 +62,17 @@ class DashboardWidget
             '<li><strong style="color:%s;">%d</strong> %s</li>',
             $counts[Finding::SEVERITY_CRITICAL] > 0 ? '#b32d2e' : 'inherit',
             (int) $counts[Finding::SEVERITY_CRITICAL],
-            esc_html__('critical changes open', 'seo-change-monitor')
+            esc_html__('critical changes open', 'silent-seo-alerts')
         );
         printf(
             '<li><strong>%d</strong> %s</li>',
             (int) $counts[Finding::SEVERITY_WARNING],
-            esc_html__('warnings open', 'seo-change-monitor')
+            esc_html__('warnings open', 'silent-seo-alerts')
         );
         printf(
             '<li><strong>%d</strong> %s</li>',
             (int) $counts[Finding::SEVERITY_INFO],
-            esc_html__('informational changes open', 'seo-change-monitor')
+            esc_html__('informational changes open', 'silent-seo-alerts')
         );
         echo '</ul>';
 
@@ -82,17 +82,17 @@ class DashboardWidget
                 ? esc_html(
                     sprintf(
                         /* translators: %s: date and time */
-                        __('Last checked %s', 'seo-change-monitor'),
+                        __('Last checked %s', 'silent-seo-alerts'),
                         $lastRun->finished_at
                     )
                 )
-                : esc_html__('No check has run yet.', 'seo-change-monitor')
+                : esc_html__('No check has run yet.', 'silent-seo-alerts')
         );
 
         printf(
             '<a href="%s" class="button button-secondary">%s</a>',
             esc_url($logUrl),
-            esc_html__('Open the flight log', 'seo-change-monitor')
+            esc_html__('Open the flight log', 'silent-seo-alerts')
         );
     }
 }

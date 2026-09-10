@@ -2,7 +2,7 @@
 
 namespace SEOChangeMonitor\Services\CheckEngine;
 
-if (!\defined('ABSPATH')) {
+if (!defined('ABSPATH')) {
     exit;
 }
 
@@ -12,8 +12,6 @@ use SEOChangeMonitor\Models\Finding;
 use SEOChangeMonitor\Models\Snapshot;
 use SEOChangeMonitor\Models\Target;
 use SEOChangeMonitor\Services\Alerts\AlertMailer;
-use SEOChangeMonitor\Services\Alerts\SlackNotifier;
-use SEOChangeMonitor\Services\Alerts\WebhookNotifier;
 use SEOChangeMonitor\Services\Baseline\BaselineManager;
 use SEOChangeMonitor\Services\Db;
 use SEOChangeMonitor\Services\Events\Attribution;
@@ -263,7 +261,7 @@ class CheckRunner
 
         if ($isImpaired) {
             ImpairedState::mark(
-                __('The site could not fetch its own pages (loopback requests are failing).', 'seo-change-monitor')
+                __('The site could not fetch its own pages (loopback requests are failing).', 'silent-seo-alerts')
             );
         } else {
             ImpairedState::clear();
@@ -285,9 +283,8 @@ class CheckRunner
         BaselineManager::disarmAfterComparison($runId);
 
         (new AlertMailer())->sendRunDigest($runId);
-        (new WebhookNotifier())->sendRunDigest($runId);
-        (new SlackNotifier())->sendRunDigest($runId);
 
+        // Anything that notifies an outside service listens here.
         do_action(Config::withPrefix('run_finished'), $runId);
 
         return CheckRun::findOne(['id' => $runId]);

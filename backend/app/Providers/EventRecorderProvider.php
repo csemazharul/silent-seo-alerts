@@ -2,7 +2,7 @@
 
 namespace SEOChangeMonitor\Providers;
 
-if (!\defined('ABSPATH')) {
+if (!defined('ABSPATH')) {
     exit;
 }
 

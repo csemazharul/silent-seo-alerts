@@ -1,13 +1,12 @@
 {
-  "name": "john-doe/seo-change-monitor",
-  "description": "Custom WordPress plugin with React frontend",
+  "name": "mi/silent-seo-alerts",
+  "description": "Monitors WordPress pages for SEO-affecting changes and alerts you when one lands.",
   "type": "wordpress-plugin",
   "license": "GPL-2.0-or-later",
   "require": {
     "php": ">=8.2",
     "bitapps/wp-validator": "^1",
     "bitapps/wp-database": "^1",
-    "bitapps/wp-telemetry": "^0",
     "bitapps/wp-kit": "^2.0",
     "typisttech/imposter-plugin": "^0.6.2"
   },

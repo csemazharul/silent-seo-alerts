@@ -1,12 +1,11 @@
 <?php
 namespace SEOChangeMonitor;
 
-use SEOChangeMonitor\Config;
-use WP_CLI;
-
-if (! \defined('ABSPATH')) {
+if (!defined('ABSPATH')) {
     exit;
 }
+
+use SEOChangeMonitor\Config;
 
 final class Dotenv
 {
@@ -49,47 +48,5 @@ final class Dotenv
                 $_ENV[$name] = $value;
             }
         }
-    }
-
-    public static function setEnv($key, $flag)
-    {
-        $envFilePath = realpath(__DIR__ . DIRECTORY_SEPARATOR . '../../.env');
-
-        $lines = file($envFilePath, FILE_IGNORE_NEW_LINES);
-
-        $value = $flag ? 'true' : 'false';
-
-        $pattern = "/^{$key}\s*=\s*(.*)/m";
-
-        $envKeyValue = "{$key} = {$value}";
-
-        $found = false;
-
-        foreach ($lines as &$line) {
-            if (preg_match($pattern, $line)) {
-                $line  = $envKeyValue;
-                $found = true;
-
-                break;
-            }
-        }
-
-        unset($line);
-
-        if (! $found) {
-            $lines[] = $envKeyValue;
-        }
-
-        $envData = implode("\n", $lines);
-
-        $isContentUpdated = file_put_contents($envFilePath, $envData);
-
-        if ($isContentUpdated === false) {
-            WP_CLI::error(\sprintf('Error writing to the file %s!', $isContentUpdated));
-
-            exit;
-        }
-
-        return $isContentUpdated;
     }
 }

@@ -4,7 +4,7 @@ import { applyTheme, readStoredCompact, readStoredMode, resolveMode } from './st
 import './resource/styles/variables.css'
 import './resource/styles/global.css'
 
-const elm = document.querySelector('#seo-change-monitor-root')
+const elm = document.querySelector('#silent-seo-alerts-root')
 if (elm) {
   // Before the first paint, so the saved theme never flashes the wrong way.
   applyTheme(resolveMode(readStoredMode()), readStoredCompact())

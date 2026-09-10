@@ -2,7 +2,7 @@
 
 namespace SEOChangeMonitor\Providers;
 
-if (!\defined('ABSPATH')) {
+if (!defined('ABSPATH')) {
     exit;
 }
 
@@ -20,7 +20,6 @@ class SetupProvider
     {
         Hooks::addAction(Config::withPrefix('activate'), [$this, 'activate']);
         Hooks::addAction(Config::withPrefix('deactivate'), [CronProvider::class, 'unscheduleAll']);
-        Hooks::addAction(Config::withPrefix('uninstall'), [self::class, 'uninstall']);
     }
 
     public function activate()
@@ -42,9 +41,9 @@ class SetupProvider
     public function seedSystemTargets()
     {
         $systems = [
-            [Target::TYPE_ROBOTS, home_url('/robots.txt'), __('robots.txt', 'seo-change-monitor')],
-            [Target::TYPE_SITEMAP, '', __('XML sitemap', 'seo-change-monitor')],
-            [Target::TYPE_SITE_SETTINGS, '', __('Site indexing settings', 'seo-change-monitor')],
+            [Target::TYPE_ROBOTS, home_url('/robots.txt'), __('robots.txt', 'silent-seo-alerts')],
+            [Target::TYPE_SITEMAP, '', __('XML sitemap', 'silent-seo-alerts')],
+            [Target::TYPE_SITE_SETTINGS, '', __('Site indexing settings', 'silent-seo-alerts')],
         ];
 
         foreach ($systems as [$type, $url, $label]) {
@@ -69,7 +68,7 @@ class SetupProvider
                 'type'      => Target::TYPE_PAGE,
                 'post_id'   => (int) get_option('page_on_front') ?: null,
                 'url'       => home_url('/'),
-                'label'     => __('Front page', 'seo-change-monitor'),
+                'label'     => __('Front page', 'silent-seo-alerts'),
                 'is_active' => 1,
             ]
         );
@@ -99,27 +98,6 @@ class SetupProvider
                     'is_active' => 0,
                 ]
             );
-        }
-    }
-
-    public static function uninstall()
-    {
-        global $wpdb;
-
-        // Options and transients carrying the plugin prefix.
-        $like = $wpdb->esc_like(Config::VAR_PREFIX) . '%';
-        $wpdb->query(
-            $wpdb->prepare(
-                "DELETE FROM {$wpdb->options} WHERE option_name LIKE %s OR option_name LIKE %s OR option_name LIKE %s",
-                $like,
-                '_transient_' . $like,
-                '_transient_timeout_' . $like
-            )
-        );
-
-        // Scheduled events.
-        foreach (['scheduled_check', 'run_tick', 'post_change_check', 'daily_maintenance', 'weekly_report'] as $hook) {
-            wp_unschedule_hook(Config::withPrefix($hook));
         }
     }
 }

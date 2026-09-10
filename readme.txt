@@ -1,5 +1,5 @@
 === Silent SEO Alerts ===
-Contributors: mazharulislam
+Contributors: alexmorgandev
 Tags: seo, monitoring, noindex, alerts, schema
 Requires at least: 5.9
 Tested up to: 7.1
@@ -113,11 +113,11 @@ plugin cleans up every site on the network.
 
 == Screenshots ==
 
-1. The dashboard: current health, findings over time, and what changed most recently.
-2. The flight log — every check run and every finding, filterable by severity and type.
-3. A finding in detail, showing exactly what the value was before and after.
-4. Monitored pages, with the last result for each.
-5. Settings: check frequency, email alerts and data retention.
+1. The dashboard: how many critical, warning and informational changes are open, a 14-day history, a breakdown by change type, what needs attention first, and which AI crawlers have visited.
+2. Monitored pages: every page being watched, when it was last checked, how that check went, and a switch to pause any of them.
+3. The flight log: every change found, graded by severity and explained in plain English, filterable by severity, status and page.
+4. Site-wide checks: robots.txt, the XML sitemap, WordPress's own search engine visibility setting, and what your robots.txt tells each AI crawler.
+5. Settings: how often to check, how long to keep history, and who gets emailed about what.
 
 == Changelog ==
 

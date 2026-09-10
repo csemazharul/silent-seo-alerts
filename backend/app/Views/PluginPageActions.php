@@ -2,7 +2,7 @@
 
 namespace SEOChangeMonitor\Views;
 
-if (!\defined('ABSPATH')) {
+if (!defined('ABSPATH')) {
     exit;
 }
 
@@ -15,11 +15,11 @@ class PluginPageActions
         return [
             [
                 'url'   => admin_url('admin.php?page=' . Config::SLUG . '#/settings'),
-                'title' => __('Settings', 'seo-change-monitor'),
+                'title' => __('Settings', 'silent-seo-alerts'),
             ],
             [
-                'url'   => 'https://wordpress.org/support/plugin/seo-change-monitor/',
-                'title' => __('Support', 'seo-change-monitor'),
+                'url'   => 'https://wordpress.org/support/plugin/silent-seo-alerts/',
+                'title' => __('Support', 'silent-seo-alerts'),
             ],
         ];
     }

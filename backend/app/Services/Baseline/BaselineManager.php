@@ -2,7 +2,7 @@
 
 namespace SEOChangeMonitor\Services\Baseline;
 
-if (!\defined('ABSPATH')) {
+if (!defined('ABSPATH')) {
     exit;
 }
 

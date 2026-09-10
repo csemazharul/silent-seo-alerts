@@ -1,23 +1,23 @@
 <?php
 namespace SEOChangeMonitor;
 
+if (!defined('ABSPATH')) {
+    exit;
+}
+
 use SEOChangeMonitor\src\Menu;
 use SEOChangeMonitor\Views\Body;
 use SEOChangeMonitor\Views\PluginPageActions;
 
-if (! \defined('ABSPATH')) {
-    exit;
-}
-
 class Config
 {
-    public const SLUG = 'seo-change-monitor';
+    public const SLUG = 'silent-seo-alerts';
 
-    public const REST_NAMESPACE = 'SEOChangeMonitor';
+    public const REST_NAMESPACE = 'SilentSeoAlerts';
 
-    public const PRO_PLUGIN_SLUG = 'seo-change-monitor-pro';
+    public const PRO_PLUGIN_SLUG = 'silent-seo-alerts-pro';
 
-    public const TITLE = 'SEO Change Monitor';
+    public const TITLE = 'Silent SEO Alerts';
 
     public const VAR_PREFIX = 'SEO_CHANGE_MONITOR_';
 
@@ -25,9 +25,9 @@ class Config
 
     public const DB_VERSION = '0.2.0';
 
-    public const REQUIRED_PHP_VERSION = '7.4';
+    public const REQUIRED_PHP_VERSION = '8.2';
 
-    public const REQUIRED_WP_VERSION = '5.0';
+    public const REQUIRED_WP_VERSION = '5.9';
 
     public const API_VERSION = '1.0';
 

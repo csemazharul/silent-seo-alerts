@@ -2,7 +2,7 @@
 
 namespace SEOChangeMonitor\HTTP\Controllers;
 
-if (!\defined('ABSPATH')) {
+if (!defined('ABSPATH')) {
     exit;
 }
 
@@ -31,11 +31,11 @@ class TargetController
         }
 
         if (!$url) {
-            return Response::error(__('Please provide a valid URL on this site.', 'seo-change-monitor'));
+            return Response::error(__('Please provide a valid URL on this site.', 'silent-seo-alerts'));
         }
 
         if (Target::findOne(['url' => $url, 'type' => Target::TYPE_PAGE])) {
-            return Response::error(__('This page is already being monitored.', 'seo-change-monitor'));
+            return Response::error(__('This page is already being monitored.', 'silent-seo-alerts'));
         }
 
         $label  = sanitize_text_field((string) $request->get('label'));
@@ -56,7 +56,7 @@ class TargetController
     {
         $target = $this->findPageTarget((int) $request->get('id'));
         if (!$target) {
-            return Response::error(__('Monitored page not found.', 'seo-change-monitor'));
+            return Response::error(__('Monitored page not found.', 'silent-seo-alerts'));
         }
 
         $updates = [];
@@ -79,7 +79,7 @@ class TargetController
     {
         $target = $this->findPageTarget((int) $request->get('id'));
         if (!$target) {
-            return Response::error(__('Monitored page not found.', 'seo-change-monitor'));
+            return Response::error(__('Monitored page not found.', 'silent-seo-alerts'));
         }
 
         Target::destroy([$target->id]);
@@ -104,7 +104,7 @@ class TargetController
         foreach ($posts as $post) {
             $results[] = [
                 'post_id' => $post->ID,
-                'title'   => $post->post_title !== '' ? $post->post_title : __('(no title)', 'seo-change-monitor'),
+                'title'   => $post->post_title !== '' ? $post->post_title : __('(no title)', 'silent-seo-alerts'),
                 'url'     => get_permalink($post),
                 'type'    => $post->post_type,
             ];

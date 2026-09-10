@@ -2,7 +2,7 @@
 
 namespace SEOChangeMonitor\src;
 
-if (!\defined('ABSPATH')) {
+if (!defined('ABSPATH')) {
     exit;
 }
 
@@ -36,8 +36,8 @@ class NetworkDashboard
     public function registerMenu()
     {
         add_menu_page(
-            __('SEO Change Monitor', 'seo-change-monitor'),
-            __('SEO Monitor', 'seo-change-monitor'),
+            __('Silent SEO Alerts', 'silent-seo-alerts'),
+            __('Silent SEO Alerts', 'silent-seo-alerts'),
             'manage_network_options',
             Config::SLUG . '-network',
             [$this, 'render'],
@@ -140,14 +140,14 @@ class NetworkDashboard
         );
 
         echo '<div class="wrap">';
-        printf('<h1>%s</h1>', esc_html__('SEO Change Monitor network overview', 'seo-change-monitor'));
+        printf('<h1>%s</h1>', esc_html__('Silent SEO Alerts network overview', 'silent-seo-alerts'));
 
         printf(
             '<p>%s</p>',
             esc_html(
                 sprintf(
                     /* translators: 1: sites, 2: pages, 3: critical, 4: warnings */
-                    __('%1$d sites · %2$d pages monitored · %3$d critical · %4$d warnings', 'seo-change-monitor'),
+                    __('%1$d sites · %2$d pages monitored · %3$d critical · %4$d warnings', 'silent-seo-alerts'),
                     \count($rows),
                     $totals['pages'],
                     $totals['critical'],
@@ -166,7 +166,7 @@ class NetworkDashboard
                             'Monitoring is impaired on %d site. Its results cannot be trusted until fixed.',
                             'Monitoring is impaired on %d sites. Their results cannot be trusted until fixed.',
                             $totals['impaired'],
-                            'seo-change-monitor'
+                            'silent-seo-alerts'
                         ),
                         $totals['impaired']
                     )
@@ -177,18 +177,18 @@ class NetworkDashboard
         printf(
             '<p><a class="button" href="%s">%s</a> <span style="color:#646970;">%s</span></p>',
             esc_url($refreshUrl),
-            esc_html__('Refresh now', 'seo-change-monitor'),
-            esc_html__('Figures are cached for 5 minutes.', 'seo-change-monitor')
+            esc_html__('Refresh now', 'silent-seo-alerts'),
+            esc_html__('Figures are cached for 5 minutes.', 'silent-seo-alerts')
         );
 
         echo '<table class="widefat striped"><thead><tr>';
         foreach (
             [
-                __('Site', 'seo-change-monitor'),
-                __('Critical', 'seo-change-monitor'),
-                __('Warnings', 'seo-change-monitor'),
-                __('Pages', 'seo-change-monitor'),
-                __('Last check', 'seo-change-monitor'),
+                __('Site', 'silent-seo-alerts'),
+                __('Critical', 'silent-seo-alerts'),
+                __('Warnings', 'silent-seo-alerts'),
+                __('Pages', 'silent-seo-alerts'),
+                __('Last check', 'silent-seo-alerts'),
                 '',
             ] as $heading
         ) {
@@ -207,7 +207,7 @@ class NetworkDashboard
             if (!$row['active']) {
                 printf(
                     '<td colspan="4" style="color:#646970;">%s</td>',
-                    esc_html__('Plugin not active on this site', 'seo-change-monitor')
+                    esc_html__('Plugin not active on this site', 'silent-seo-alerts')
                 );
             } else {
                 printf(
@@ -220,15 +220,15 @@ class NetworkDashboard
                 printf(
                     '<td>%s</td>',
                     $row['impaired']
-                        ? '<span style="color:#bd8600;">' . esc_html__('impaired', 'seo-change-monitor') . '</span>'
-                        : esc_html($row['last_run'] ?: __('never', 'seo-change-monitor'))
+                        ? '<span style="color:#bd8600;">' . esc_html__('impaired', 'silent-seo-alerts') . '</span>'
+                        : esc_html($row['last_run'] ?: __('never', 'silent-seo-alerts'))
                 );
             }
 
             printf(
                 '<td><a href="%s">%s</a></td>',
                 esc_url($row['admin_url']),
-                esc_html__('Open', 'seo-change-monitor')
+                esc_html__('Open', 'silent-seo-alerts')
             );
             echo '</tr>';
         }

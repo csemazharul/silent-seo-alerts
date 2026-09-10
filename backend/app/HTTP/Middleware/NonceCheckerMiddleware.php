@@ -2,7 +2,7 @@
 
 namespace SEOChangeMonitor\HTTP\Middleware;
 
-if (!\defined('ABSPATH')) {
+if (!defined('ABSPATH')) {
     exit;
 }
 
@@ -19,7 +19,7 @@ class NonceCheckerMiddleware
     public function handle(Request $request)
     {
         if (!wp_verify_nonce($request->get('_ajax_nonce'), Config::withPrefix('nonce'))) {
-            return Response::error(__('Nonce verification failed.', 'seo-change-monitor'), 403);
+            return Response::error(__('Nonce verification failed.', 'silent-seo-alerts'), 403);
         }
 
         return true;

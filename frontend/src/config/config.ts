@@ -43,7 +43,7 @@ interface ConfigType {
 const config = {
   AJAX_URL: getServerVariable('ajaxURL', '/wp-admin/admin-ajax.php'),
   API_URL: getServerVariable('apiURL', {
-    base: '/wp-json/SEOChangeMonitor/v1',
+    base: '/wp-json/SilentSeoAlerts/v1',
     separator: '?'
   }),
   DATE_FORMAT: getServerVariable('dateFormat', 'F j, Y'),
@@ -54,10 +54,10 @@ const config = {
   KEY: getServerVariable('key'), // license key
   NONCE: getServerVariable('nonce', ''),
   PLUGIN_ADMIN_URL: getServerVariable('pluginAdminURL'),
-  PLUGIN_SLUG: getServerVariable('pluginSlug', 'seo-change-monitor'),
+  PLUGIN_SLUG: getServerVariable('pluginSlug', 'silent-seo-alerts'),
   PRO_SLUG: getServerVariable('proSlug'),
   PRO_VERSION: getServerVariable('proPluginVersion'),
-  PRODUCT_NAME: 'seo-change-monitor',
+  PRODUCT_NAME: 'silent-seo-alerts',
   REDIRECT_URI: getServerVariable('redirectUri'),
   REST_NONCE: getServerVariable('restNonce', ''),
   ROOT_URL: getServerVariable('rootURL', '/'),

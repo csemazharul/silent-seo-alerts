@@ -2,9 +2,9 @@ import { create } from 'zustand'
 
 export type ThemeMode = 'dark' | 'light' | 'system'
 
-const STORAGE_KEY = 'seo-change-monitor:theme'
-const DENSITY_KEY = 'seo-change-monitor:compact'
-const ROOT_ID = 'seo-change-monitor-root'
+const STORAGE_KEY = 'silent-seo-alerts:theme'
+const DENSITY_KEY = 'silent-seo-alerts:compact'
+const ROOT_ID = 'silent-seo-alerts-root'
 
 const isMode = (value: unknown): value is ThemeMode =>
   value === 'light' || value === 'dark' || value === 'system'

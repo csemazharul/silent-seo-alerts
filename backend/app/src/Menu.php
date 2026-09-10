@@ -2,7 +2,7 @@
 
 namespace SEOChangeMonitor\src;
 
-if (!\defined('ABSPATH')) {
+if (!defined('ABSPATH')) {
     exit;
 }
 
@@ -29,12 +29,12 @@ final class Menu
         // Submenu entries point at the same admin page with a hash route, so
         // the React app navigates without a page load.
         $routes = [
-            ''               => __('Dashboard', 'seo-change-monitor'),
-            '#/pages'        => __('Monitored Pages', 'seo-change-monitor'),
-            '#/log'          => __('Flight Log', 'seo-change-monitor'),
-            '#/site'         => __('Site-wide', 'seo-change-monitor'),
-            '#/integrations' => __('Integrations', 'seo-change-monitor'),
-            '#/settings'     => __('Settings', 'seo-change-monitor'),
+            ''               => __('Dashboard', 'silent-seo-alerts'),
+            '#/pages'        => __('Monitored Pages', 'silent-seo-alerts'),
+            '#/log'          => __('Flight Log', 'silent-seo-alerts'),
+            '#/site'         => __('Site-wide', 'silent-seo-alerts'),
+            '#/integrations' => __('Integrations', 'silent-seo-alerts'),
+            '#/settings'     => __('Settings', 'silent-seo-alerts'),
         ];
 
         foreach ($routes as $route => $label) {

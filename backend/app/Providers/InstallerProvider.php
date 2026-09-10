@@ -2,7 +2,7 @@
 
 namespace SEOChangeMonitor\Providers;
 
-if (!\defined('ABSPATH')) {
+if (!defined('ABSPATH')) {
     exit;
 }
 
@@ -44,8 +44,8 @@ final class InstallerProvider
                 'uninstall' => self::$_uninstallHook,
             ],
             [
-                'migration' => $this->migration(),
-                'drop'      => $this->drop(),
+                'migration' => self::migration(),
+                'drop'      => self::drop(),
             ]
         );
         $installer->register();
@@ -71,19 +71,30 @@ final class InstallerProvider
         Hooks::doAction(self::$_uninstallHook, $networkWide);
     }
 
+    /**
+     * The migrations, in the order they must run.
+     */
     public static function migration()
     {
         return [
             'path'       => Config::get('BASEDIR') . DIRECTORY_SEPARATOR . 'db' . DIRECTORY_SEPARATOR . 'Migrations' . DIRECTORY_SEPARATOR,
-            'migrations' => ['PluginOptions', 'Targets', 'Snapshots', 'Findings', 'SiteEvents', 'CheckRuns', 'BotVisits'],
+            'migrations' => [
+                'SEOChangeMonitorPluginOptions',
+                'SEOChangeMonitorTargets',
+                'SEOChangeMonitorSnapshots',
+                'SEOChangeMonitorFindings',
+                'SEOChangeMonitorSiteEvents',
+                'SEOChangeMonitorCheckRuns',
+                'SEOChangeMonitorBotVisits',
+            ],
         ];
     }
 
+    /**
+     * The same set: installing calls up() on each, uninstalling calls down().
+     */
     public static function drop()
     {
-        return [
-            'path'       => Config::get('BASEDIR') . DIRECTORY_SEPARATOR . 'db' . DIRECTORY_SEPARATOR . 'Migrations' . DIRECTORY_SEPARATOR,
-            'migrations' => ['PluginOptions', 'Targets', 'Snapshots', 'Findings', 'SiteEvents', 'CheckRuns', 'BotVisits'],
-        ];
+        return self::migration();
     }
 }

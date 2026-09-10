@@ -2,7 +2,7 @@
 
 namespace SEOChangeMonitor\Views;
 
-if (!\defined('ABSPATH')) {
+if (!defined('ABSPATH')) {
     exit;
 }
 

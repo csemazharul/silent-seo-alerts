@@ -2,7 +2,7 @@
 
 namespace SEOChangeMonitor\Views;
 
-if (!\defined('ABSPATH')) {
+if (!defined('ABSPATH')) {
     exit;
 }
 
@@ -11,7 +11,8 @@ use SEOChangeMonitor\Deps\BitApps\WPKit\Helpers\DateTimeHelper;
 
 class Head
 {
-    public const FONT_URL = 'https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap';
+    /** Bundled under assets/fonts - nothing here is fetched from a third party. */
+    public const FONT_PATH = '/fonts/outfit.css';
 
     public function addHeadScripts($currentScreen)
     {
@@ -23,16 +24,14 @@ class Head
         $slug     = Config::SLUG;
         $codeName = Config::get('BUILD_CODE_NAME');
 
-        wp_enqueue_style($slug . '-googleapis-PRECONNECT', 'https://fonts.googleapis.com', [], $version);
-        wp_enqueue_style($slug . '-gstatic-PRECONNECT-CROSSORIGIN', 'https://fonts.gstatic.com', [], $version);
-        wp_enqueue_style($slug . '-font', self::FONT_URL, [], $version);
+        wp_enqueue_style($slug . '-font', Config::get('ASSET_URI') . self::FONT_PATH, [], $version);
 
         if (Config::getEnv('DEV')) {
             wp_enqueue_script($slug . '-vite-client-helper-MODULE', Config::getEnv('DEV_URL') . '/src/config/devHotModule.js', [], null);
             wp_enqueue_script($slug . '-vite-client-MODULE', Config::getEnv('DEV_URL') . '/@vite/client', [], null);
             wp_enqueue_script($slug . '-index-MODULE', Config::getEnv('DEV_URL') . '/src/main.tsx', [], null);
         } else {
-            wp_enqueue_script($slug . '-index-MODULE', Config::get('ASSET_URI') . "/main-{$codeName}.js", [], '');
+            wp_enqueue_script($slug . '-index-MODULE', Config::get('ASSET_URI') . "/main-{$codeName}.js", [], $version);
             wp_enqueue_style($slug . '-styles', Config::get('ASSET_URI') . "/main-{$slug}-ba-assets-{$codeName}.css", null, $version, 'screen');
         }
 
@@ -59,7 +58,12 @@ class Head
                 'ajaxURL'        => admin_url('admin-ajax.php'),
                 'apiURL'         => Config::get('API_URL'),
                 'routePrefix'    => Config::VAR_PREFIX,
-                'settings'       => Config::getOption('settings'),
+                // Same filter the settings endpoint uses, so an add-on's
+                // secrets never reach the page through this route either.
+                'settings'       => apply_filters(
+                    Config::withPrefix('settings_for_client'),
+                    (array) Config::getOption('settings')
+                ),
                 'dateFormat'     => Config::getOption('date_format', false, true),
                 'timeFormat'     => Config::getOption('time_format', false, true),
                 'timeZone'       => DateTimeHelper::wp_timezone_string(),
@@ -67,6 +71,13 @@ class Head
                 'uploadBaseUrl'  => Config::get('UPLOAD_BASE_URL'),
                 'version'        => Config::VERSION,
                 'lang'           => get_locale(),
+
+                // The app hides pro-only screens unless the add-on is active,
+                // so this is the single source of truth for that.
+                'isSeoChangeMonitorProExist' => defined('SEO_CHANGE_MONITOR_PRO_VERSION') ? '1' : '0',
+                'proPluginVersion'           => defined('SEO_CHANGE_MONITOR_PRO_VERSION')
+                    ? SEO_CHANGE_MONITOR_PRO_VERSION
+                    : '',
             ]
         );
 

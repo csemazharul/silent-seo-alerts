@@ -2,7 +2,7 @@
 
 namespace SEOChangeMonitor\HTTP\Controllers;
 
-if (!\defined('ABSPATH')) {
+if (!defined('ABSPATH')) {
     exit;
 }
 
@@ -18,7 +18,7 @@ class CheckController
         $run    = $runner->runSync('manual');
 
         if (!$run) {
-            return Response::error(__('Could not start the check.', 'seo-change-monitor'));
+            return Response::error(__('Could not start the check.', 'silent-seo-alerts'));
         }
 
         return Response::success($run);

@@ -2,7 +2,7 @@
 
 namespace SEOChangeMonitor\Services\CheckEngine;
 
-if (!\defined('ABSPATH')) {
+if (!defined('ABSPATH')) {
     exit;
 }
 
@@ -20,7 +20,10 @@ class PageFetcher
                 'timeout'     => 15,
                 'redirection' => 0, // record the redirect target, never follow it
                 'user-agent'  => 'SEOChangeMonitor/' . Config::VERSION . '; ' . home_url('/'),
-                'sslverify'   => apply_filters('https_local_ssl_verify', false),
+                // Certificates are verified. A site behind a self-signed cert -
+                // staging, or a local install - can switch that off here rather
+                // than through WordPress's own https_ssl_verify.
+                'sslverify'   => apply_filters(Config::withPrefix('ssl_verify'), true),
             ]
         );
 

@@ -2,7 +2,7 @@
 
 namespace SEOChangeMonitor\Providers;
 
-if (!\defined('ABSPATH')) {
+if (!defined('ABSPATH')) {
     exit;
 }
 
@@ -10,7 +10,6 @@ use SEOChangeMonitor\Config;
 use SEOChangeMonitor\Deps\BitApps\WPKit\Hooks\Hooks;
 use SEOChangeMonitor\Services\CheckEngine\CheckRunner;
 use SEOChangeMonitor\Services\Maintenance\BotSilenceChecker;
-use SEOChangeMonitor\Services\Reports\WeeklyReport;
 use SEOChangeMonitor\Services\Maintenance\RetentionPruner;
 use SEOChangeMonitor\Services\Settings;
 
@@ -27,6 +26,7 @@ class CronProvider
 
     public const HOOK_MAINTENANCE = 'daily_maintenance';
 
+    /** Pro owns the weekly report now; kept so old scheduled events are cleared. */
     public const HOOK_WEEKLY_REPORT = 'weekly_report';
 
     public function __construct()
@@ -35,7 +35,6 @@ class CronProvider
         Hooks::addAction(Config::withPrefix(self::HOOK_TICK), [$this, 'runTick']);
         Hooks::addAction(Config::withPrefix(self::HOOK_POST_CHANGE), [$this, 'runPostChange']);
         Hooks::addAction(Config::withPrefix(self::HOOK_MAINTENANCE), [$this, 'runMaintenance']);
-        Hooks::addAction(Config::withPrefix(self::HOOK_WEEKLY_REPORT), [$this, 'runWeeklyReport']);
 
         // Activation/deactivation scheduling is wired in SetupProvider, which is
         // constructed at plugin load, because this class only exists from `init` onward.
@@ -66,15 +65,6 @@ class CronProvider
         (new RetentionPruner())->prune();
     }
 
-    public function runWeeklyReport()
-    {
-        if (!Settings::get('report_enabled')) {
-            return;
-        }
-
-        (new WeeklyReport())->send();
-    }
-
     /**
      * If a queued run has gone quiet (cron never fired), nudge it along on the
      * next admin page load rather than leaving it stuck.
@@ -101,19 +91,6 @@ class CronProvider
         if (!wp_next_scheduled($maintenance)) {
             wp_schedule_event(time() + HOUR_IN_SECONDS, 'daily', $maintenance);
         }
-
-        $report = Config::withPrefix(self::HOOK_WEEKLY_REPORT);
-        if (!wp_next_scheduled($report)) {
-            wp_schedule_event(self::nextMondayMorning(), 'weekly', $report);
-        }
-    }
-
-    /** Reports land Monday morning, when someone is around to read them. */
-    private static function nextMondayMorning()
-    {
-        $next = strtotime('next monday 08:00', current_time('timestamp'));
-
-        return $next ? $next - (int) (get_option('gmt_offset') * HOUR_IN_SECONDS) : time() + WEEK_IN_SECONDS;
     }
 
     public static function unscheduleAll()
@@ -138,7 +115,9 @@ class CronProvider
         $hook = Config::withPrefix(self::HOOK_SCHEDULED);
         wp_unschedule_hook($hook);
 
-        if ($frequency === 'off' || !\in_array($frequency, ['hourly', 'twicedaily', 'daily'], true)) {
+        // 'off' is a valid choice that simply means no recurring check. Reading
+        // the rest from Settings keeps this in step if a frequency is ever added.
+        if ($frequency === 'off' || !\in_array($frequency, Settings::FREQUENCIES, true)) {
             return;
         }
 

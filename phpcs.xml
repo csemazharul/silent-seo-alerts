@@ -19,10 +19,10 @@
   <rule ref="PHPCompatibilityWP" />
   <config name="testVersion" value="8.2-" />
 
-  <config name="minimum_supported_wp_version" value="5.8" />
+  <config name="minimum_supported_wp_version" value="5.9" />
   <rule ref="WordPress.WP.I18n">
     <properties>
-      <property name="text_domain" type="array" value="seo-change-monitor" />
+      <property name="text_domain" type="array" value="silent-seo-alerts" />
     </properties>
   </rule>
 

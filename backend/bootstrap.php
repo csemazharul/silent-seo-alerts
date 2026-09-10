@@ -4,7 +4,7 @@ use SEOChangeMonitor\Dotenv;
 use SEOChangeMonitor\Plugin;
 use SEOChangeMonitor\src\CLI\Commands;
 
-if (! defined('ABSPATH')) {
+if (!defined('ABSPATH')) {
     exit;
 }
 
